@@ -1,0 +1,61 @@
+{% macro button(text, href) %}
+  <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
+    <tbody>
+      <tr>
+        <td align="left">
+          <table border="0" cellpadding="0" cellspacing="0">
+            <tbody>
+              <tr>
+                <td> <a href="{{ href }}" target="_blank">{{ text }}</a> </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+{% endmacro %}
+
+{% macro permission_label(code, universe=True) %}
+  {%- if code == 'read' -%}
+    读取
+  {%- elif code == 'write' -%}
+    {%- if universe -%}
+      读取和写入
+    {%- else -%}
+      写入
+    {%- endif -%}
+  {%- elif code == 'admin' -%}
+    {%- if universe -%}
+      读取、写入和管理
+    {%- else -%}
+      管理
+    {%- endif -%}
+  {%- endif %}
+{% endmacro %}
+
+{% macro current_user_label(code) %}
+  {%- if g.auth and g.auth.username -%}
+    {{- g.auth.username -}}
+  {%- else -%}
+    系统
+  {%- endif %}
+{% endmacro %}
+
+{% macro infra_type_label(type_name) %}
+  {%- if type_name == 'database' -%}
+    关系型数据库
+  {%- elif type_name == 'redis' %}
+    Redis 集群
+  {%- elif type_name == 'amqp' %}
+    AMQP 消息队列
+  {%- elif type_name == 'es' %}
+    ElasticSearch 集群
+  {%- elif type_name == 'oss' %}
+    对象存储资源
+  {%- elif type_name == 'kafka' %}
+    Kafka 消息队列
+  {%- else -%}
+    未知类型的基础资源
+  {%- endif -%}
+{% endmacro %}

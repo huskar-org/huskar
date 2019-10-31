@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# USAGE:
+# 1) Install jshint via `npm i -g jshint`
+# 2) Make this file executable with chmod +x
+# 3) Put it in project's .git/hooks/ and name it pre-commit
+
+pylintconf=$PWD/tools/pylint/pylintrc
+
+export PYTHONPATH="$PWD/tools/pylint:$PYTHONPATH"
+
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+  against=HEAD
+else
+  # Initial commit: diff against an empty tree object
+  against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+
+py_flag=0
+flake8_flag=0
+
+pyfiles=$(git diff-index --name-only --diff-filter=ACMR ${against} -- \
+  | grep '.py$')
+
+if test -z "$pyfiles"
+then
+  echo "no diff py file for pylint"
+elif which pylint >/dev/null
+then
+  for file in $pyfiles
+  do
+    flake8 $file || flake8_flag=1
+    pylint --rcfile="${pylintconf}" $file
+    py_flag=$(($? & 2))
+  done
+else
+  echo "Y U NO USE PYLINT"
+fi
+
+all_flag=`expr $py_flag + $flake8_flag`
+exit $all_flag

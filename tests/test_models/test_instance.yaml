@@ -1,0 +1,528 @@
+---
+
+test_infra_info_ok:
+  args: _data,_type
+  data:
+    - _data:
+        idcs:
+          alta1:
+            db100010:
+              master: 'sam+mysql://db100010.master/db100010/overall'
+              slave: 'sam+mysql://db100010.auto/db100010/overall'
+        clusters:
+          alta1-channel-stable-1:
+            db100010:
+              master: 'sam+mysql://db100010.master/db100010/overall.alta'
+              slave: 'sam+mysql://db100010.auto/db100010/overall.alta'
+      _type: database
+    - _data:
+        idcs:
+          alta1:
+            redis100010:
+              url: 'sam+redis://redis.infra_ci/overall.alphatest'
+      _type: redis
+    - _data:
+        idcs:
+          alta1:
+            amqp100010:
+              url: 'sam+amqp://rabbitmq.100010/overall/vhost'
+      _type: amqp
+    - _data:
+        idcs:
+          alta1:
+            amqp100010:
+              url: 'sam+amqp://rabbitmq.100010/overall/vhost'
+      _type: amqp
+    - _data:
+        idcs:
+          alta1:
+            amqp100010:
+              url: 'sam+amqp://user:@#$deX^h&@rabbitmq.100010/overall/vhost'
+      _type: amqp
+    - _data:
+        idcs:
+          alta1:
+            es100010:
+              url: 'sam+http://infra.xxx.es/overall'
+      _type: es
+    - _data:
+        idcs:
+          alta1:
+            es100011:
+              url: 'sam+transport://infra.xxx.es/overall'
+      _type: es
+    - _data:
+        idcs:
+          alta1:
+            mongo100010:
+              url: 'sam+mongo://foo.xxx.mongo/overall'
+      _type: mongo
+    - _data:
+        idcs:
+          alta1:
+            oss100010:
+              url: 'sam+http://foo.oss_test/overall'
+      _type: oss
+    - _data:
+        idcs:
+          alta1:
+            oss100010:
+              url: 'sam+http://foo.oss_test/overall'
+      _type: oss
+    - _data:
+        idcs:
+          alta1:
+            kafka100010:
+              url: 'sam+kafka://infra.kafka.kafka-01/overall'
+              group.id: 'this-group'
+      _type: kafka
+
+test_infra_info_fail:
+  args: _data,_type,_error
+  data:
+    - _data:
+        idcs:
+          frog1:
+            db100010:
+              master: 'sam+mysql://db100010.master/db100010/overall'
+              slave: 'sam+mysql://db100010.auto/db100010/overall'
+      _type: database
+      _error: 'frog1 is not valid zone'
+    - _data:
+        idcs:
+          alta1:
+            db100010:
+              master: 'sam+mysql://db100010.master/overall'
+      _type: database
+      _error: 'slave.{1,6}Missing data for required field'
+    - _data:
+        idcs:
+          alta1:
+            db100010:
+              master: 'sam+redis://db100010.master/db100010/overall'
+              slave: 'sam+mysql://db100010.auto/db100010/overall'
+      _type: database
+      _error: 'master.{1,6}Not a valid URL'
+    - _data:
+        idcs:
+          alta1:
+            redis100010:
+              url: 'sam+mysql://redis.100010/overall'
+      _type: redis
+      _error: 'url.{1,6}Not a valid URL'
+    - _data:
+        idcs:
+          alta1:
+            amqp10010:
+              url: 'sam+mysql://rabbitmq.100010/vhost/overall'
+      _type: amqp
+      _error: 'url.{1,6}Not a valid URL'
+
+test_infra_info_list:
+  args: _data,_type,_name,_result
+  data:
+    - _data:
+        idcs:
+          alta1:
+            redis100010:
+              url: 'sam+redis://redis.100010/overall.alta'
+            redis100011:
+              url: 'sam+redis://redis.100011/overall.alta'
+          altb1:
+            redis100010:
+              url: 'sam+redis://redis.100010/overall.altb'
+              jedis.testOnBorrow: true
+        clusters:
+          alta1-channel-stable-1:
+            redis100010:
+              url: 'sam+redis://redis.100010/alta1-channel-stable-1'
+      _type: redis
+      _name: redis100010
+      _result:
+        - ['clusters', 'alta1-channel-stable-1', {'url': 'sam+redis://redis.100010/alta1-channel-stable-1'}]
+        - ['idcs', 'alta1', {'url': 'sam+redis://redis.100010/overall.alta'}]
+        - ['idcs', 'altb1', {'url': 'sam+redis://redis.100010/overall.altb', 'jedis.testOnBorrow': true}]
+    - _data:
+        idcs:
+          alta1:
+            db100010:
+              master: 'sam+mysql://db100010.master/db100010/overall'
+              slave: 'sam+mysql://db100010.auto/db100010/overall'
+              max_pool_size: 10
+              max_pool_overflow: null
+      _type: database
+      _name: db100010
+      _result:
+        - ['idcs', 'alta1', {'master': 'sam+mysql://db100010.master/db100010/overall', 'slave': 'sam+mysql://db100010.auto/db100010/overall', 'max_pool_size': 10, 'max_pool_overflow': null}]
+    - _data: null
+      _type: database
+      _name: db100010
+      _result: []
+
+test_infra_info_get:
+  args: _data,_type,_name,_args,_result
+  data:
+    - _data:
+        clusters:
+          alta1-channel-stable-1:
+            redis10010:
+              url: 'sam+redis://redis.10010/overall.alta'
+            redis10011:
+              url: 'sam+redis://redis.10011/overall.alta'
+              jedis.testOnReturn: true
+      _type: redis
+      _name: redis10010
+      _args:
+        scope_type: clusters
+        scope_name: alta1-channel-stable-1
+      _result: {}
+
+test_infra_info_set:
+  args: _data,_type,_name,_args,_result
+  data:
+    - _data:
+        idcs:
+          alta1:
+            redis100010:
+              url: 'sam+redis://redis.100010/overall.alta'
+            redis100011:
+              url: 'sam+redis://redis.100011/overall.alta'
+          altb1:
+            redis100010:
+              url: 'sam+redis://redis.100010/overall.altb'
+        clusters:
+          alta1-channel-stable-1:
+            redis100010:
+              url: 'sam+redis://redis.100010/alta1-channel-stable-1'
+      _type: redis
+      _name: redis100010
+      _args:
+        scope_type: clusters
+        scope_name: altb1-channel-stable-1
+        value:
+          url: 'sam+redis://redis.100010/altb1-channel-stable-1'
+          jedis.testOnReturn: true
+      _result:
+        idcs:
+          alta1:
+            redis100010:
+              url: 'sam+redis://redis.100010/overall.alta'
+            redis100011:
+              url: 'sam+redis://redis.100011/overall.alta'
+          altb1:
+            redis100010:
+              url: 'sam+redis://redis.100010/overall.altb'
+        clusters:
+          alta1-channel-stable-1:
+            redis100010:
+              url: 'sam+redis://redis.100010/alta1-channel-stable-1'
+          altb1-channel-stable-1:
+            redis100010:
+              url: 'sam+redis://redis.100010/altb1-channel-stable-1'
+              jedis.testOnReturn: true
+    - _data: null
+      _type: database
+      _name: db100010
+      _args:
+        scope_type: idcs
+        scope_name: alta1
+        value:
+          master: 'sam+mysql://db100010.master/db100010/overall.alta'
+          slave: 'sam+mysql://db100010.auto/db100010/overall.alta'
+      _result:
+        idcs:
+          alta1:
+            db100010:
+              master: 'sam+mysql://db100010.master/db100010/overall.alta'
+              slave: 'sam+mysql://db100010.auto/db100010/overall.alta'
+    - _data: null
+      _type: database
+      _name: db100010
+      _args:
+        scope_type: idcs
+        scope_name: alta1
+        value:
+          master: 'sam+mysql://db100010.master/db100010/overall.alta'
+          slave: 'sam+mysql://db100010.auto/db100010/overall.alta'
+          max_pool_size: 100
+          max_pool_overflow: 200
+          jdbc.urlParameters: encoding=utf-8&foo=bar
+      _result:
+        idcs:
+          alta1:
+            db100010:
+              master: 'sam+mysql://db100010.master/db100010/overall.alta'
+              slave: 'sam+mysql://db100010.auto/db100010/overall.alta'
+              max_pool_size: 100
+              max_pool_overflow: 200
+              jdbc.urlParameters: encoding=utf-8&foo=bar
+    - _data: null
+      _type: database
+      _name: wow
+      _args:
+        scope_type: idcs
+        scope_name: alta1
+        value:
+          master: 'mysql://root@localhost:3306/wow'
+          slave: 'mysql://root@localhost:3306/wow'
+      _result:
+        idcs:
+          alta1:
+            wow:
+              master: 'mysql://root@localhost:3306/wow'
+              slave: 'mysql://root@localhost:3306/wow'
+    - _data: null
+      _type: amqp
+      _name: amqp100010
+      _args:
+        scope_type: idcs
+        scope_name: alta1
+        value:
+          url: 'sam+amqp://amqp100010/vhost/overall.alta'
+          connection_pool_size: 100
+          auto_recover: false
+      _result:
+        idcs:
+          alta1:
+            amqp100010:
+              url: 'sam+amqp://amqp100010/vhost/overall.alta'
+              connection_pool_size: 100
+              auto_recover: false
+
+test_infra_info_update:
+  args: _data,_type,_name,_args,_result
+  data:
+    - _data:
+        idcs:
+          alta1:
+            redis100010:
+              url: 'sam+redis://redis.100010/overall.alta'
+              max_pool_size: 100
+              connect_timeout_ms: 5
+            corvus100011:
+              url: 'sam+redis://corvus.100011/overall.alta'
+              max_pool_size: 100
+              connect_timeout_ms: 5
+          altb1:
+            corvus100010:
+              url: 'sam+redis://corvus.100010/overall.altb'
+              max_pool_size: 100
+              connect_timeout_ms: 5
+        clusters:
+          alta1-channel-stable-1:
+            redis100010:
+              url: 'sam+redis://redis.100010/alta1-channel-stable-1'
+              max_pool_size: 100
+              connect_timeout_ms: 5
+      _type: redis
+      _name: redis100010
+      _args:
+        scope_type: clusters
+        scope_name: alta1-channel-stable-1
+        value:
+          url: 'sam+redis://redis.100010/overall.alta'
+      _result:
+        idcs:
+          alta1:
+            redis100010:
+              url: 'sam+redis://redis.100010/overall.alta'
+              max_pool_size: 100
+              connect_timeout_ms: 5
+            corvus100011:
+              url: 'sam+redis://corvus.100011/overall.alta'
+              max_pool_size: 100
+              connect_timeout_ms: 5
+          altb1:
+            corvus100010:
+              url: 'sam+redis://corvus.100010/overall.altb'
+              max_pool_size: 100
+              connect_timeout_ms: 5
+        clusters:
+          alta1-channel-stable-1:
+            redis100010:
+              url: 'sam+redis://redis.100010/overall.alta'
+              max_pool_size: 100
+              connect_timeout_ms: 5
+    - _data:
+        idcs:
+          alta1:
+            db100010:
+              master: 'sam+mysql://db100010.master/db100010/overall.alta'
+              slave: 'sam+mysql://db100010.auto/db100010/overall.alta'
+              max_pool_size: 100
+      _type: database
+      _name: db100010
+      _args:
+        scope_type: idcs
+        scope_name: alta1
+        value:
+          master: 'sam+mysql://db100010.master/db100010/overall.alta'
+          slave: 'sam+mysql://db100010.auto/db100010/overall.alta'
+          max_pool_size: 10
+      _result:
+        idcs:
+          alta1:
+            db100010:
+              master: 'sam+mysql://db100010.master/db100010/overall.alta'
+              slave: 'sam+mysql://db100010.auto/db100010/overall.alta'
+              max_pool_size: 10
+    - _data:
+        idcs:
+          alta1:
+            wow:
+              master: 'mysql://root@localhost:3306/wow'
+              slave: 'mysql://root@localhost:3306/wow'
+              max_pool_size: 10
+      _type: database
+      _name: wow
+      _args:
+        scope_type: idcs
+        scope_name: alta1
+        value:
+          master: 'mysql://root@localhost:3306/wow'
+          slave: 'mysql://root@localhost:3306/wow'
+          max_pool_size: 10
+      _result:
+        idcs:
+          alta1:
+            wow:
+              master: 'mysql://root@localhost:3306/wow'
+              slave: 'mysql://root@localhost:3306/wow'
+              max_pool_size: 10
+    - _data:
+        idcs:
+          alta1:
+            amqp100010:
+              url: 'sam+amqp://amqp100010/vhost/overall.alta'
+              connection_pool_size: 100
+              auto_recover: false
+      _type: amqp
+      _name: amqp100010
+      _args:
+        scope_type: idcs
+        scope_name: alta1
+        value:
+          url: 'sam+amqp://amqp100010/vhost/overall.alta'
+          connection_pool_size: 10
+          auto_recover: false
+      _result:
+        idcs:
+          alta1:
+            amqp100010:
+              url: 'sam+amqp://amqp100010/vhost/overall.alta'
+              connection_pool_size: 10
+              auto_recover: false
+
+test_infra_info_delete:
+  args: _data,_type,_name,_args,_result
+  data:
+    - _data:
+        idcs:
+          alta1:
+            redis100010:
+              url: 'sam+redis://redis.100010/overall.alta'
+            redis100011:
+              url: 'sam+redis://redis.100011/overall.alta'
+          altb1:
+            redis100010:
+              url: 'sam+redis://redis.100010/overall.altb'
+        clusters:
+          alta1-channel-stable-1:
+            redis100010:
+              url: 'sam+redis://redis.100010/alta1-channel-stable-1'
+          altb1-channel-stable-1:
+            redis100010:
+              url: 'sam+redis://redis.100010/altb1-channel-stable-1'
+      _type: redis
+      _name: redis100010
+      _args:
+        scope_type: clusters
+        scope_name: altb1-channel-stable-1
+      _result:
+        idcs:
+          alta1:
+            redis100010:
+              url: 'sam+redis://redis.100010/overall.alta'
+            redis100011:
+              url: 'sam+redis://redis.100011/overall.alta'
+          altb1:
+            redis100010:
+              url: 'sam+redis://redis.100010/overall.altb'
+        clusters:
+          alta1-channel-stable-1:
+            redis100010:
+              url: 'sam+redis://redis.100010/alta1-channel-stable-1'
+          altb1-channel-stable-1: {}
+    - _data:
+        idcs:
+          alta1:
+            db100010:
+              master: 'sam+mysql://db100010.master/db100010/overall.alta'
+              slave: 'sam+mysql://db100010.auto/db100010/overall.alta'
+      _type: database
+      _name: db100010
+      _args:
+        scope_type: idcs
+        scope_name: alta1
+      _result:
+        idcs:
+          alta1: {}
+
+test_infra_info_extract_urls:
+  args: _type,_value,_result
+  data:
+    - _type: database
+      _value:
+        master: 'sam+mysql://db100010.master/db100010/overall.alta'
+      _result:
+        - key: 'master'
+          url: 'sam+mysql://db100010.master/db100010/overall.alta'
+    - _type: database
+      _value:
+        master: 'sam+mysql://db100010.master/db100010/overall.alta'
+        slave: 'sam+mysql://db100010.auto/db100010/overall.alta'
+      _result:
+        - key: 'master'
+          url: 'sam+mysql://db100010.master/db100010/overall.alta'
+        - key: 'slave'
+          url: 'sam+mysql://db100010.auto/db100010/overall.alta'
+    - _type: redis
+      _value:
+        url: 'sam+redis://redis.100010/alta1-channel-stable-1'
+      _result:
+        - key: 'url'
+          url: 'sam+redis://redis.100010/alta1-channel-stable-1'
+    - _type: amqp
+      _value:
+        url: 'sam+amqp://rabbitmq.100010/vhost/overall'
+      _result:
+        - key: 'url'
+          url: 'sam+amqp://rabbitmq.100010/vhost/overall'
+    - _type: amqp
+      _value:
+        url: 'amqp://169.254.0.1:10010/vhost/overall'
+      _result:
+        - key: 'url'
+          url: 'amqp://169.254.0.1:10010/vhost/overall'
+
+test_sam_instance_upsert:
+  args: cluster_name,key,value,version,need_sync_error,need_value_error
+  data:
+    - cluster_name: channel-1
+      key: a1
+      value:
+        ip: "10.0.0.1"
+        port:
+          main: 5000
+        state: 'up'
+      need_sync_error: false
+      need_value_error: false
+    - cluster_name: channel-1
+      key: a2
+      value:
+        ip: "10.0.0.1"
+        port:
+          main: 5000
+        state: 'up'
+      need_sync_error: false
+      need_value_error: false

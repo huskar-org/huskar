@@ -1,0 +1,75 @@
+---
+
+test_config_and_switch_readonly_middleware:
+  args: _path,_method,_read_only,_data,_status,_in_whitelist,_in_blacklist
+  data:
+    - _path: '/api/config/%s/overall'
+      _method: 'GET'
+      _read_only: True
+      _data:
+        key: 'foo'
+      _status: True
+      _in_whitelist: False
+      _in_blacklist: False
+    - _path: '/api/config/%s/overall'
+      _method: 'GET'
+      _read_only: False
+      _data:
+        key: 'foo'
+      _status: True
+      _in_whitelist: False
+      _in_blacklist: False
+    - _path: '/api/config/%s/overall'
+      _method: 'POST'
+      _read_only: True
+      _data:
+        key: 'foo'
+        value: 'test'
+      _status: True
+      _in_whitelist: False
+      _in_blacklist: False
+    - _path: '/api/config/%s/overall'
+      _method: 'POST'
+      _read_only: False
+      _data:
+        key: 'foo'
+        value: 'test'
+      _status: False
+      _in_whitelist: False
+      _in_blacklist: False
+    - _path: '/api/config/%s/overall'
+      _method: 'POST'
+      _read_only: False
+      _data:
+        key: 'foo'
+        value: 'test'
+      _status: True
+      _in_whitelist: True
+      _in_blacklist: False
+    - _path: '/api/config/%s/overall'
+      _method: 'POST'
+      _read_only: False
+      _data:
+        key: 'foo'
+        value: 'test'
+      _status: False
+      _in_whitelist: False
+      _in_blacklist: True
+    - _path: '/api/config/%s/overall'
+      _method: 'POST'
+      _read_only: True
+      _data:
+        key: 'foo'
+        value: 'test'
+      _status: False
+      _in_whitelist: False
+      _in_blacklist: True
+    - _path: '/api/service/%s/overall'
+      _method: 'POST'
+      _read_only: False
+      _data:
+        key: '169.254.1.2_5000'
+        value: '{"ip": "169.254.1.2","port":{"main": 5000},"state":"up","other":"test"}'
+      _status: True
+      _in_whitelist: False
+      _in_blacklist: False

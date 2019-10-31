@@ -1,0 +1,59 @@
+---
+
+test_cluster_data:
+  args: before,should_exist,should_not_exist
+  data:
+    - before:
+        - path: '/huskar_{base_path}/service/{test_application}/foo'
+          data: null
+        - path: '/huskar_{base_path}/service/{test_application}/bar/x'
+          data: null
+        - path: '/huskar_{base_path}/service/foo /bar'
+          data: null
+        - path: '/huskar_{base_path}/service/black_appid/bar'
+          data: null
+      should_exist:
+        - path: '/huskar_{base_path}/service/{test_application}/bar'
+        - path: '/huskar_{base_path}/service/black_appid/bar'
+        - path: '/huskar_{base_path}/service/foo /bar'
+      should_not_exist:
+        - path: '/huskar_{base_path}/service/{test_application}/foo'
+    - before:
+        - path: '/huskar_{base_path}/service/{test_application}/foo'
+          data: 'xxx'
+        - path: '/huskar_{base_path}/service/{test_application}/bar'
+          data: '{}'
+        - path: '/huskar_{base_path}/service/{test_application}/baz'
+          data: '{"link":[]}'
+        - path: '/huskar_{base_path}/service/{test_application}/biu'
+          data: '{"link":["foo"]}'
+        - path: '/huskar_{base_path}/service/{test_application}/boo'
+          data: '1'
+      should_exist:
+        - path: '/huskar_{base_path}/service/{test_application}/foo'
+        - path: '/huskar_{base_path}/service/{test_application}/biu'
+        - path: '/huskar_{base_path}/service/{test_application}/boo'
+      should_not_exist:
+        - path: '/huskar_{base_path}/service/{test_application}/bar'
+        - path: '/huskar_{base_path}/service/{test_application}/baz'
+    - before:
+        - path: '/huskar_{base_path}/service/{test_application}/foo'
+          data: '{"info": {"balance_policy":"Random"}}'
+        - path: '/huskar_{base_path}/service/{test_application}/bar'
+          data: '{"info": {"balance_policy":"Random"}, "link":[]}'
+        - path: '/huskar_{base_path}/service/{test_application}/baz'
+          data: '{"link":[]}'
+      should_exist:
+        - path: '/huskar_{base_path}/service/{test_application}/foo'
+        - path: '/huskar_{base_path}/service/{test_application}/bar'
+      should_not_exist:
+        - path: '/huskar_{base_path}/service/{test_application}/baz'
+    - before:
+        - path: '/huskar_{base_path}/service/{test_application}/foo'
+          data: '{"route":{"foo":"bar"}}'
+        - path: '/huskar_{base_path}/service/{test_application}/bar'
+          data: '{"route":{}}'
+      should_exist:
+        - path: '/huskar_{base_path}/service/{test_application}/foo'
+      should_not_exist:
+        - path: '/huskar_{base_path}/service/{test_application}/bar'

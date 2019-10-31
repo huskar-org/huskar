@@ -1,0 +1,839 @@
+---
+
+test_add_data:
+  args: old_tree,new_tree,adding_args
+  data:
+    - old_tree: []
+      new_tree:
+        - path: '/'
+          children: ['beta']
+        - path: '/beta'
+          children: ['foo']
+        - path: '/beta/foo'
+          value: 'foo1'
+          children: []
+      adding_args:
+        - cluster: 'beta'
+          key: 'foo'
+          value: 'foo1'
+    - old_tree:
+        - path: '/beta/foo'
+          value: 'foo2'
+      new_tree:
+        - path: '/'
+          children: ['beta']
+        - path: '/beta'
+          children: ['foo', 'bar']
+        - path: '/beta/foo'
+          value: 'foo2'
+          children: []
+        - path: '/beta/bar'
+          value: 'bar2'
+          children: []
+      adding_args:
+        - cluster: 'beta'
+          key: 'bar'
+          value: 'bar2'
+    - old_tree:
+        - path: '/beta/foo'
+          value: 'foo3'
+      new_tree:
+        - path: '/'
+          children: ['beta']
+        - path: '/beta'
+          children: ['foo']
+        - path: '/beta/foo'
+          value: 'foo3.1'
+          children: []
+      adding_args:
+        - cluster: 'beta'
+          key: 'foo'
+          value: 'foo3.1'
+    - old_tree:
+        - path: '/beta/foo'
+          value: 'foo3'
+      new_tree:
+        - path: '/'
+          children: ['beta']
+        - path: '/beta'
+          children: ['foo', 'bar']
+        - path: '/beta/foo'
+          value: '中文foo'
+          children: []
+        - path: '/beta/bar'
+          value: '中文bar'
+          children: []
+      adding_args:
+        - cluster: 'beta'
+          key: 'foo'
+          value: '中文foo'
+        - cluster: 'beta'
+          key: 'bar'
+          value: '中文bar'
+    - old_tree:
+        - path: '/beta/foo'
+          value: 'foo4'
+          comment: '中文foo4'
+      new_tree:
+        - path: '/beta/foo'
+          value: 'foo4'
+          comment: '中文foo4'
+        - path: '/alpha/bar'
+          value: 'bar4'
+          comment: '中文bar4'
+      adding_args:
+        - cluster: 'alpha'
+          key: 'bar'
+          value: 'bar4'
+          comment: '中文bar4'
+    - old_tree: []
+      new_tree:
+        - path: '/'
+          children: ['beta']
+        - path: '/beta'
+          children: ['FX_foo']
+        - path: '/beta/FX_foo'
+          value: 'foo1'
+          children: []
+      adding_args:
+        - cluster: 'beta'
+          key: 'FX_foo'
+          value: 'foo1'
+    - old_tree: []
+      new_tree:
+        - path: '/'
+          children: ['beta']
+        - path: '/beta'
+          children: ['ELEfoo']
+        - path: '/beta/ELEfoo'
+          value: 'foo1'
+          children: []
+      adding_args:
+        - cluster: 'beta'
+          key: 'ELEfoo'
+          value: 'foo1'
+
+test_delete_data:
+  args: old_tree,new_tree,deleting_args
+  data:
+    - old_tree:
+        - path: '/beta/foo'
+          value: 'foo1'
+      new_tree:
+        - path: '/'
+          children: ['beta']
+        - path: '/beta'
+          children: []
+      deleting_args:
+        - cluster: 'beta'
+          key: 'foo'
+    - old_tree:
+        - path: '/beta/foo'
+          value: 'foo2'
+        - path: '/beta/bar'
+          value: 'bar2'
+      new_tree:
+        - path: '/'
+          children: ['beta']
+        - path: '/beta'
+          children: ['foo']
+        - path: '/beta/foo'
+          value: 'foo2'
+          children: []
+      deleting_args:
+        - cluster: 'beta'
+          key: 'bar'
+    - old_tree:
+        - path: '/beta/foo'
+          value: 'foo3'
+        - path: '/alpha/foo'
+          value: 'foo3.1'
+      new_tree:
+        - path: '/'
+          children: ['beta', 'alpha']
+        - path: '/beta'
+          children: ['foo']
+        - path: '/beta/foo'
+          value: 'foo3'
+          children: []
+      deleting_args:
+        - cluster: 'alpha'
+          key: 'foo'
+    - old_tree:
+        - path: '/beta/foo'
+          value: 'foo4'
+          comment: '啊foo4耶'
+        - path: '/beta/bar'
+          value: 'bar4'
+          comment: '啊bar4耶'
+      new_tree:
+        - path: '/'
+          children: ['beta']
+        - path: '/beta'
+          children: ['bar']
+        - path: '/beta/bar'
+          value: 'bar4'
+          children: []
+          comment: '啊bar4耶'
+      deleting_args:
+        - cluster: 'beta'
+          key: 'foo'
+
+
+test_get_data:
+  args: tree,result
+  data:
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo1'
+      result:
+        - cluster: 'beta'
+          key: 'foo'
+          value: 'foo1'
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo2'
+        - path: '/beta/bar'
+          value: 'bar2'
+      result:
+        - cluster: 'beta'
+          key: 'foo'
+          value: 'foo2'
+        - cluster: 'beta'
+          key: 'bar'
+          value: 'bar2'
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo3'
+        - path: '/beta/bar'
+          value: 'bar3中文'
+      result:
+        - cluster: 'beta'
+          key: 'foo'
+          value: 'foo3'
+        - cluster: 'beta'
+          key: 'bar'
+          value: 'bar3中文'
+    - tree:
+        - path: '/beta/test-.!#$:'
+          value: 'foo3'
+      result:
+        - cluster: 'beta'
+          key: 'test-.!#$:'
+          value: 'foo3'
+
+test_get_data_failed:
+  args: tree,result
+  data:
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo1'
+      result:
+        - cluster: 'beta'
+          key: 'bar'
+          status_code: 404
+          status_text: 'NotFound'
+          message: '%(data_type)s %(test_application_name)s/beta/bar does not exist'
+    - tree: []
+      result:
+        - cluster: 'beta'
+          key: '..'
+          status_code: 400
+          status_text: 'ValidationError'
+          message: '{"key": ["Key(..) should not starts with dots or contains CRLF."]}'
+        - cluster: 'foo'
+          key: |
+            test
+            breakline
+          status_code: 400
+          status_text: 'ValidationError'
+          message: '{"key": ["Key(test\nbreakline\n) should not starts with dots or contains CRLF."]}'
+        - cluster: 'beta'
+          key: '哔'
+          status_code: 400
+          status_text: 'ValidationError'
+          message: '{"key": ["Key(\u54d4) contains unicode characters."]}'
+        - cluster: '..'
+          key: 'foo'
+          value: 'test'
+          status_code: 400
+          status_text: 'ValidationError'
+          message: '{"cluster": ["Cluster(..) should consist by most 64 characters of numbers, letters and underscores, and not starts with dots."]}'
+
+test_get_multi:
+  args: tree,result
+  data:
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo1'
+      result:
+        - cluster: 'beta'
+          pairs:
+            - key: 'foo'
+              value: 'foo1'
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo2'
+        - path: '/beta/bar'
+          value: 'bar2'
+      result:
+        - cluster: 'beta'
+          pairs:
+            - key: 'foo'
+              value: 'foo2'
+            - key: 'bar'
+              value: 'bar2'
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo3'
+        - path: '/beta/bar'
+          value: 'bar3'
+        - path: '/alpha/baz'
+          value: 'baz3'
+      result:
+        - cluster: 'beta'
+          pairs:
+            - key: 'foo'
+              value: 'foo3'
+            - key: 'bar'
+              value: 'bar3'
+        - cluster: 'alpha'
+          pairs:
+            - key: 'baz'
+              value: 'baz3'
+
+test_get_clusters:
+  args: tree,clusters
+  data:
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo1'
+      clusters:
+        - 'beta'
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo2'
+        - path: '/beta/bar'
+          value: 'bar2'
+      clusters:
+        - 'beta'
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo3'
+        - path: '/beta/bar'
+          value: 'bar3'
+        - path: '/alpha/baz'
+          value: 'baz3'
+      clusters:
+        - 'alpha'
+        - 'beta'
+    - tree:
+        - path: '/alpha'
+          value: '{"link":["beta"]}'
+        - path: '/beta'
+          value: '{"route":{"base.foo":"alpha"}}'
+      clusters:
+        - 'alpha'
+        - 'beta'
+
+test_create_clusters:
+  args: tree,name,expected
+  data:
+    - tree: []
+      name: 'foo'
+      expected:
+        code: 200
+        status: 'SUCCESS'
+        message: ''
+        clusters:
+          - 'foo'
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo1'
+      name: 'alpha'
+      expected:
+        code: 200
+        status: 'SUCCESS'
+        message: ''
+        clusters:
+          - 'alpha'
+          - 'beta'
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo1'
+      name: 'beta'
+      expected:
+        code: 400
+        status: 'DataExistsError'
+        message: 'cluster exists already'
+        clusters:
+          - 'beta'
+    - tree:
+        - path: '/beta'
+          value: ''
+      name: '嗷'
+      expected:
+        code: 400
+        status: 'ValidationError'
+        message: '{"cluster": ["Cluster(\u55f7) should consist by most 64 characters of numbers, letters and underscores, and not starts with dots."]}'
+        clusters:
+          - 'beta'
+    - tree:
+        - path: '/beta'
+          value: ''
+      name: '..'
+      expected:
+        code: 400
+        status: 'ValidationError'
+        message: '{"cluster": ["Cluster(..) should consist by most 64 characters of numbers, letters and underscores, and not starts with dots."]}'
+        clusters:
+          - 'beta'
+
+
+test_delete_clusters:
+  args: tree,name,expected
+  data:
+    - tree:
+        - path: '/beta'
+          value: '{"link":[],"route":{}}'
+      name: 'beta'
+      expected:
+        code: 200
+        status: 'SUCCESS'
+        message: ''
+        clusters: []
+    - tree:
+        - path: '/beta'
+          value: ''
+      name: 'alpha'
+      expected:
+        code: 400
+        status: 'DataNotExistsError'
+        message: 'cluster does not exist'
+        clusters:
+          - 'beta'
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo1'
+      name: 'beta'
+      expected:
+        code: 400
+        status: 'DataNotEmptyError'
+        message: 'There are instances in this cluster'
+        clusters:
+          - 'beta'
+    - tree:
+        - path: '/beta'
+          value: '{"route":{"foo":"bar"}}'
+      name: 'beta'
+      expected:
+        code: 400
+        status: 'DataNotEmptyError'
+        message: 'There are routes or links in this cluster'
+        clusters:
+          - 'beta'
+    - tree:
+        - path: '/beta'
+          value: '{"link":["biu"]}'
+      name: 'beta'
+      expected:
+        code: 400
+        status: 'DataNotEmptyError'
+        message: 'There are routes or links in this cluster'
+        clusters:
+          - 'beta'
+    - tree:
+        - path: '/'
+          value: '{"dependency":{"base.foo":["alpha"],"base.bar":["beta"]}}'
+        - path: '/beta'
+          value: ''
+      name: 'beta'
+      expected:
+        code: 400
+        status: 'DataNotEmptyError'
+        message: 'There are outgoing routes in this cluster'
+        clusters:
+          - 'beta'
+    - tree:
+        - path: '/beta'
+          value: ''
+      name: ''
+      expected:
+        code: 400
+        status: 'ValidationError'
+        message: '{"cluster": ["Cluster() should consist by most 64 characters of numbers, letters and underscores, and not starts with dots."]}'
+        clusters:
+          - 'beta'
+
+test_batch_export:
+  args: tree,result
+  data:
+    - tree: []
+      result: []
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo1'
+          comment: 'yoho'
+      result:
+        - cluster: 'beta'
+          comment: 'yoho'
+          key: 'foo'
+          value: 'foo1'
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo2'
+        - path: '/beta/bar'
+          value: 'bar2'
+      result:
+        - cluster: 'beta'
+          comment: ''
+          key: 'foo'
+          value: 'foo2'
+        - cluster: 'beta'
+          comment: ''
+          key: 'bar'
+          value: 'bar2'
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo3'
+        - path: '/beta/bar'
+          value: 'bar3'
+          comment: 'this is beta bar'
+        - path: '/alpha/baz'
+          value: 'baz3'
+      result:
+        - cluster: 'beta'
+          comment: ''
+          key: 'foo'
+          value: 'foo3'
+        - cluster: 'beta'
+          comment: 'this is beta bar'
+          key: 'bar'
+          value: 'bar3'
+        - cluster: 'alpha'
+          comment: ''
+          key: 'baz'
+          value: 'baz3'
+
+test_batch_import:
+  args: presented_tree,request_data,response_data,changed_tree,audit_data
+  data:
+    - presented_tree: []
+      request_data:
+        override: 1
+        content: []
+      response_data:
+        import_num: 0
+      changed_tree: []
+      audit_data:
+        nested: '{}'
+        stored: true
+        overwrite: true
+        affected: 0
+    - presented_tree: []
+      request_data:
+        override: 0
+        content:
+          - cluster: 'beta'
+            comment: ''
+            key: 'foo'
+            value: 'foo1'
+      response_data:
+        import_num: 1
+      changed_tree:
+        - path: '/beta/foo'
+          value: 'foo1'
+      audit_data:
+        nested: '{"%(name)s": {"beta": {"foo": "foo1"}}}'
+        stored: true
+        overwrite: false
+        affected: 1
+    - presented_tree: []
+      request_data:
+        override: 0
+        content:
+          - cluster: 'beta'
+            comment: ''
+            key: 'foo'
+            value: '中文'
+      response_data:
+        import_num: 1
+      changed_tree:
+        - path: '/beta/foo'
+          value: '中文'
+      audit_data:
+        nested: '{"%(name)s": {"beta": {"foo": "中文"}}}'
+        stored: true
+        overwrite: false
+        affected: 1
+    - presented_tree:
+        - path: '/beta/foo'
+          value: 'foo'
+          comment: ''
+      request_data:
+        override: 0
+        content:
+          - cluster: 'beta'
+            comment: ''
+            key: 'foo'
+            value: 'foo2'
+      response_data:
+        import_num: 0
+      changed_tree:
+        - path: '/beta/foo'
+          value: 'foo'
+      audit_data:
+        nested: '{"%(name)s": {"beta": {"foo": "foo2"}}}'
+        stored: true
+        overwrite: false
+        affected: 0
+    - presented_tree:
+        - path: '/beta/foo'
+          value: 'foo'
+          comment: 'wu'
+      request_data:
+        override: 0
+        content:
+          - cluster: 'beta'
+            comment: 'biubiu'
+            key: 'foo'
+            value: 'foo2'
+      response_data:
+        import_num: 0
+      changed_tree:
+        - path: '/beta/foo'
+          value: 'foo'
+          comment: 'wu'
+      audit_data:
+        nested: '{"%(name)s": {"beta": {"foo": "foo2"}}}'
+        stored: true
+        overwrite: false
+        affected: 0
+    - presented_tree:
+        - path: '/beta/foo'
+          value: 'foo'
+      request_data:
+        override: 1
+        content:
+          - cluster: 'beta'
+            comment: ''
+            key: 'foo'
+            value: 'foo3'
+      response_data:
+        import_num: 1
+      changed_tree:
+        - path: '/beta/foo'
+          value: 'foo3'
+      audit_data:
+        nested: '{"%(name)s": {"beta": {"foo": "foo3"}}}'
+        stored: true
+        overwrite: true
+        affected: 1
+    - presented_tree:
+        - path: '/beta/foo'
+          value: 'foo'
+          comment: 'wu'
+      request_data:
+        override: 1
+        content:
+          - cluster: 'beta'
+            comment: 'biubiu'
+            key: 'foo'
+            value: 'foo3'
+      response_data:
+        import_num: 1
+      changed_tree:
+        - path: '/beta/foo'
+          value: 'foo3'
+          comment: 'biubiu'
+      audit_data:
+        nested: '{"%(name)s": {"beta": {"foo": "foo3"}}}'
+        stored: true
+        overwrite: true
+        affected: 1
+    - presented_tree:
+        - path: '/stable/foo'
+          value: 'foo'
+        - path: '/beta/foo'
+          value: 'foo'
+      request_data:
+        override: 0
+        content:
+          - cluster: 'beta'
+            comment: ''
+            key: 'foo'
+            value: 'foo4'
+          - cluster: 'beta'
+            comment: ''
+            key: 'bar'
+            value: 'bar4'
+          - cluster: 'alpha'
+            comment: ''
+            key: 'baz'
+            value: 'baz4'
+      response_data:
+        import_num: 2
+      changed_tree:
+        - path: '/stable/foo'
+          value: 'foo'
+        - path: '/beta/foo'
+          value: 'foo'
+        - path: '/beta/bar'
+          value: 'bar4'
+        - path: '/alpha/baz'
+          value: 'baz4'
+      audit_data:
+        nested: '{"%(name)s": {"alpha": {"baz": "baz4"}, "beta": {"bar": "bar4", "foo": "foo4"}}}'
+        stored: true
+        overwrite: false
+        affected: 2
+    - presented_tree:
+        - path: '/stable/foo'
+          value: 'foo'
+        - path: '/beta/foo'
+          value: 'foo'
+      request_data:
+        override: 1
+        content:
+          - cluster: 'beta'
+            comment: ''
+            key: 'foo'
+            value: 'foo4'
+          - cluster: 'beta'
+            comment: ''
+            key: 'bar'
+            value: 'bar4'
+          - cluster: 'alpha'
+            comment: ''
+            key: 'baz'
+            value: 'baz4'
+      response_data:
+        import_num: 3
+      changed_tree:
+        - path: '/stable/foo'
+          value: 'foo'
+        - path: '/beta/foo'
+          value: 'foo4'
+        - path: '/beta/bar'
+          value: 'bar4'
+        - path: '/alpha/baz'
+          value: 'baz4'
+      audit_data:
+        nested: '{"%(name)s": {"alpha": {"baz": "baz4"}, "beta": {"bar": "bar4", "foo": "foo4"}}}'
+        stored: true
+        overwrite: true
+        affected: 3
+    - presented_tree: []
+      request_data:
+        override: 1
+        content: null
+      response_data:
+        import_num: 0
+      changed_tree: []
+      audit_data:
+        nested: '{}'
+        stored: true
+        overwrite: true
+        affected: 0
+
+
+test_batch_config_with_merge:
+  args: tree,result
+  data:
+    - tree: []
+      result: []
+    - tree:
+        - path: '/foo/foo'
+          value: 'foo2'
+      result: []
+    - tree:
+        - path: '/beta/foo'
+          value: 'foo2'
+        - path: '/beta/bar'
+          value: 'bar2'
+        - path: '/foo/bar'
+          value: 'bar2'
+      result:
+        - cluster: 'beta'
+          comment: ''
+          key: 'foo'
+          value: 'foo2'
+        - cluster: 'beta'
+          comment: ''
+          key: 'bar'
+          value: 'bar2'
+    - tree:
+        - path: '/overall/foo'
+          value: 'foo2'
+        - path: '/overall/bar'
+          value: 'bar2'
+        - path: '/foo/bar'
+          value: 'bar2'
+      result:
+        - cluster: 'beta'
+          comment: ''
+          key: 'foo'
+          value: 'foo2'
+        - cluster: 'beta'
+          comment: ''
+          key: 'bar'
+          value: 'bar2'
+    - tree:
+        - path: '/overall/foo1'
+          value: 'foo1'
+        - path: '/overall/foo2'
+          value: 'foo2'
+        - path: '/beta/bar1'
+          value: 'bar1'
+        - path: '/beta/bar2'
+          value: 'bar2'
+        - path: '/foo/bar'
+          value: 'bar2'
+      result:
+        - cluster: 'beta'
+          comment: ''
+          key: 'foo1'
+          value: 'foo1'
+        - cluster: 'beta'
+          comment: ''
+          key: 'foo2'
+          value: 'foo2'
+        - cluster: 'beta'
+          comment: ''
+          key: 'bar1'
+          value: 'bar1'
+        - cluster: 'beta'
+          comment: ''
+          key: 'bar2'
+          value: 'bar2'
+    - tree:
+        - path: '/overall/bar'
+          value: 'foo'
+        - path: '/overall/foo'
+          value: 'foo2'
+        - path: '/beta/bar'
+          value: 'bar'
+        - path: '/beta/bar2'
+          value: 'bar2'
+        - path: '/foo/bar'
+          value: 'bar2'
+      result:
+        - cluster: 'beta'
+          comment: ''
+          key: 'bar'
+          value: 'bar'
+        - cluster: 'beta'
+          comment: ''
+          key: 'foo'
+          value: 'foo2'
+        - cluster: 'beta'
+          comment: ''
+          key: 'bar2'
+          value: 'bar2'
+  dataids:
+    - no-data
+    - no-useful-data
+    - no-overall
+    - all-overall
+    - extend-overall
+    - overwrite-overall

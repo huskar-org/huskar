@@ -1,0 +1,179 @@
+---
+
+test_link_cluster:
+  args: physical_cluster,physical_key,physical_value,symlink_cluster,symlink_key,symlink_value
+  data:
+    - physical_cluster: alta-foo
+      physical_key: '169.254.0.1_5000'
+      physical_value: '{"ip":"169.254.0.1","port":{"main":5000}}'
+      symlink_cluster: stable
+      symlink_key: '169.254.0.2_5000'
+      symlink_value: '{"ip":"169.254.0.2","port":{"main":5000}}'
+    - physical_cluster: alta-foo
+      physical_key: '169.254.0.1_5000'
+      physical_value: '{"ip":"169.254.0.1","port":{"main":5000}}'
+      symlink_cluster: stable
+      symlink_key: null
+      symlink_value: null
+  dataids:
+    - '169.254.0.1_5000_169.254.0.2_5000'
+    - '169.254.0.1_5000_none'
+
+test_link_cluster_on_dirty_node:
+  args: physical_cluster,symlink_cluster,dirty_data
+  data:
+    - physical_cluster: 'alta-foo'
+      symlink_cluster: 'stable'
+      dirty_data: 'null'
+    - physical_cluster: 'alta-foo'
+      symlink_cluster: 'stable'
+      dirty_data: '{"link'
+  dataids:
+    - 'none'
+    - 'broken_dict'
+
+test_link_cluster_failed:
+  args: physical_cluster,physical_key,physical_value,symlink_cluster,symlink_key,symlink_value,present_link,error_name,error_reason
+  data:
+    - physical_cluster: alta-foo
+      physical_key: null
+      physical_value: null
+      symlink_cluster: stable
+      symlink_key: '169.254.0.1_5000'
+      symlink_value: '{"ip":"169.254.0.1","port":{"main":5000}}'
+      present_link: null
+      error_name: 'ServiceLinkError'
+      error_reason: 'the target cluster is empty.'
+    - physical_cluster: alta-foo
+      physical_key: null
+      physical_value: null
+      symlink_cluster: stable
+      symlink_key: null
+      symlink_value: null
+      present_link: null
+      error_name: 'ServiceLinkError'
+      error_reason: 'the target cluster is empty.'
+    - physical_cluster: alta-foo
+      physical_key: '169.254.0.1_5000'
+      physical_value: '{"ip":"169.254.0.1","port":{"main":5000}}'
+      symlink_cluster: stable
+      symlink_key: null
+      symlink_value: null
+      present_link:
+        from: alta-foo
+        to: alta-bar
+      error_name: 'ServiceLinkError'
+      error_reason: 'there is a link under alta-foo, cluster can only be linked once'
+    - physical_cluster: alta-foo
+      physical_key: '169.254.0.1_5000'
+      physical_value: '{"ip":"169.254.0.1","port":{"main":5000}}'
+      symlink_cluster: stable
+      symlink_key: null
+      symlink_value: null
+      present_link:
+        from: alta-bar
+        to: stable
+      error_name: 'ServiceLinkError'
+      error_reason: 'stable has been linked, cluster can only be linked once'
+    - physical_cluster: alta-foo
+      physical_key: '169.254.0.1_5000'
+      physical_value: '{"ip":"169.254.0.1","port":{"main":5000}}'
+      symlink_cluster: stable
+      symlink_key: null
+      symlink_value: null
+      present_link:
+        from: alta-foo
+        to: stable
+      error_name: 'ServiceLinkError'
+      error_reason: 'stable has been linked, cluster can only be linked once'
+    - physical_cluster: alta-foo
+      physical_key: '169.254.0.1_5000'
+      physical_value: '{"ip":"169.254.0.1","port":{"main":5000}}'
+      symlink_cluster: stable
+      symlink_key: null
+      symlink_value: null
+      present_link:
+        from: stable
+        to: alta-foo
+      error_name: 'ServiceLinkExisted'
+      error_reason: 'stable is already linked to alta-foo'
+    - physical_cluster: stable
+      physical_key: null
+      physical_value: null
+      symlink_cluster: stable
+      symlink_key: null
+      symlink_value: null
+      present_link: null
+      error_name: 'BadRequest'
+      error_reason: 'bad link parameter'
+  dataids:
+    - 'none_169.254.0.1_nochain'
+    - 'none_none_nochain'
+    - '169.254.0.1_none_tochain'
+    - '169.254.0.1_none_fromchain'
+    - '169.254.0.1_none_cycle'
+    - '169.254.0.1_none_dup'
+    - '169.254.0.1_none_badlink'
+
+test_unlink_cluster:
+  args: physical_cluster,physical_key,physical_value,symlink_cluster,symlink_key,symlink_value,symlink_version
+  data:
+    - physical_cluster: alta-foo
+      physical_key: '169.254.0.1_5000'
+      physical_value: '{"ip":"169.254.0.1","port":{"main":5000}}'
+      symlink_cluster: stable
+      symlink_key: '169.254.0.2_5000'
+      symlink_value: '{"ip":"169.254.0.2","port":{"main":5000}}'
+      symlink_version: 2
+    - physical_cluster: alta-foo
+      physical_key: '169.254.0.1_5000'
+      physical_value: '{"ip":"169.254.0.1","port":{"main":5000}}'
+      symlink_cluster: stable
+      symlink_key: null
+      symlink_value: null
+      symlink_version: 1
+  dataids:
+    - '169.254.0.1_5000_169.254.0.2_5000'
+    - '169.254.0.1_5000_none'
+
+test_get_cluster_link:
+  args: physical_cluster,physical_key,physical_value,symlink_cluster,symlink_key,symlink_value
+  data:
+    - physical_cluster: alta-foo
+      physical_key: '169.254.0.1_5000'
+      physical_value: '{"ip":"169.254.0.1","port":{"main":5000}}'
+      symlink_cluster: stable
+      symlink_key: '169.254.0.2_5000'
+      symlink_value: '{"ip":"169.254.0.2","port":{"main":5000}}'
+    - physical_cluster: alta-foo
+      physical_key: '169.254.0.1_5000'
+      physical_value: '{"ip":"169.254.0.1","port":{"main":5000}}'
+      symlink_cluster: stable
+      symlink_key: null
+      symlink_value: null
+  dataids:
+    - '169.254.0.1_5000_169.254.0.2_5000'
+    - '169.254.0.1_5000_none'
+
+test_get_empty_cluster_link:
+  args: symlink_cluster,symlink_key,symlink_value
+  data:
+    - symlink_cluster: stable
+      symlink_key: '169.254.0.2_5000'
+      symlink_value: '{"ip":"169.254.0.2","port":{"main":5000}}'
+    - symlink_cluster: stable
+      symlink_key: null
+      symlink_value: null
+  dataids:
+    - '169.254.0.2_5000'
+    - 'none'
+
+test_clear_cluster:
+  args: cluster,key,value,linkto
+  data:
+    - cluster: stable
+      key: '169.254.0.1_5000'
+      value: '{"ip":"169.254.0.1","port":{"main":5000}}'
+      linkto: "alta-foo"
+  dataids:
+    - '169.254.0.1_5000'

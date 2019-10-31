@@ -1,0 +1,42 @@
+---
+
+test_fetch_with_date:
+  args: timedelta,result_len
+  data:
+    - timedelta: -1
+      result_len: 0
+    - timedelta: 1
+      result_len: 0
+    - timedelta: 0
+      result_len: 2
+
+test_get_audit_instance_timeline:
+  args: instance_type,cluster_name,instance_key,prepare_data,expected_audit_num
+  data:
+    - instance_type: "config"
+      cluster_name: "foo"
+      instance_key: "bar"
+      prepare_data:
+        - created_date: "2017-12-12"
+          audit_num: 3
+        - created_date: "2017-12-15"
+          audit_num: 5
+      expected_audit_num: 8
+    - instance_type: "switch"
+      cluster_name: "foo"
+      instance_key: "bar"
+      prepare_data:
+        - created_date: "2017-12-12"
+          audit_num: 10
+        - created_date: "2017-12-15"
+          audit_num: 12
+      expected_audit_num: 20
+    - instance_type: "service"
+      cluster_name: "foo"
+      instance_key: "bar"
+      prepare_data:
+        - created_date: "2017-12-12"
+          audit_num: 3
+        - created_date: "2017-12-15"
+          audit_num: 5
+      expected_audit_num: 8

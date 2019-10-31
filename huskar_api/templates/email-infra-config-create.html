@@ -1,0 +1,17 @@
+{% extends 'email-base-layout.html' %}
+{% import 'email-base-components.html' as c %}
+
+{%- block preheader -%}
+您的服务 {{ application_name }} 在 {{ core_config.env }}
+环境绑定了新的{{ c.infra_type_label(infra_type) }}
+{%- endblock -%}
+
+{%- block content -%}
+  <p>Hi there,</p>
+  <p>
+    <strong>{{ c.current_user_label() }}</strong> 在您的服务
+    <code>{{ application_name }}</code>（环境: {{ core_config.env }}）
+    上绑定了新的<strong>{{ c.infra_type_label(infra_type) }}</strong>，框架和
+    SDK 接入该资源的时所用的名字 (code name) 是 <code>{{ infra_name }}</code>
+  </p>
+{%- endblock -%}

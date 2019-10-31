@@ -1,0 +1,126 @@
+---
+
+test_add_application_auth:
+  args: present_user,present_auth,request_auth,expected_resp,expected_auth
+  data:
+    - present_user: ["foo"]
+      present_auth: []
+      request_auth: "foo:read"
+      expected_resp:
+        status_code: 200
+        content:
+          status: 'SUCCESS'
+          message: ''
+          data: null
+      expected_auth: ["foo:read"]
+    - present_user: [["foo", ""]]
+      present_auth: []
+      request_auth: "foo:read"
+      expected_resp:
+        status_code: 200
+        content:
+          status: 'SUCCESS'
+          message: ''
+          data: null
+      expected_auth: ["foo:read"]
+    - present_user: ["foo", "bar", "baz"]
+      present_auth: ["foo:read"]
+      request_auth: "bar:write"
+      expected_resp:
+        status_code: 200
+        content:
+          status: 'SUCCESS'
+          message: ''
+          data: null
+      expected_auth: ["foo:read", "bar:write"]
+    - present_user: ["foo", "bar", "baz"]
+      present_auth: ["foo:read"]
+      request_auth: "foo:write"
+      expected_resp:
+        status_code: 200
+        content:
+          status: 'SUCCESS'
+          message: ''
+          data: null
+      expected_auth: ["foo:read", "foo:write"]
+    - present_user: ["foo", "bar", "baz"]
+      present_auth: ["foo:read"]
+      request_auth: "foo:read"
+      expected_resp:
+        status_code: 400
+        content:
+          status: 'AuthorityExistedError'
+          message: 'this authority has existed'
+          data: null
+      expected_auth: ["foo:read"]
+    - present_user: []
+      present_auth: []
+      request_auth: "foo:read"
+      expected_resp:
+        status_code: 400
+        content:
+          status: 'BadRequest'
+          message: 'user foo does not exist'
+          data: null
+      expected_auth: []
+
+test_delete_application_auth:
+  args: present_user,present_auth,request_auth,expected_resp,expected_auth
+  data:
+    - present_user: ["foo", "bar"]
+      present_auth: ["foo:read", "foo:write", "bar:read"]
+      request_auth: "foo:read"
+      expected_resp:
+        status_code: 200
+        content:
+          status: 'SUCCESS'
+          message: ''
+          data: null
+      expected_auth: ["foo:write", "bar:read"]
+    - present_user: [["foo", ""], "bar"]
+      present_auth: ["foo:read", "foo:write", "bar:read"]
+      request_auth: "foo:read"
+      expected_resp:
+        status_code: 200
+        content:
+          status: 'SUCCESS'
+          message: ''
+          data: null
+      expected_auth: ["foo:write", "bar:read"]
+    - present_user: ["foo", "bar"]
+      present_auth: ["bar:read"]
+      request_auth: "foo:read"
+      expected_resp:
+        status_code: 400
+        content:
+          status: 'AuthorityNotExistedError'
+          message: "foo doesn't have read of %(test_application)s"
+          data: null
+      expected_auth: ["bar:read"]
+
+test_list_application_auth:
+  args: present_user,present_auth,expected_data
+  data:
+    - present_user: ["foo", "bar"]
+      present_auth: []
+      expected_data:
+        application_auth:
+          - authority: write
+            username: "%(test_application)s"
+            is_application: true
+    - present_user: ["foo", "bar"]
+      present_auth: ["foo:read", "foo:write", "bar:read"]
+      expected_data:
+        application_auth:
+          - authority: write
+            username: "%(test_application)s"
+            is_application: true
+          - authority: read
+            username: "foo"
+            is_application: false
+          - authority: write
+            username: "foo"
+            is_application: false
+          - authority: read
+            username: "bar"
+            is_application: false

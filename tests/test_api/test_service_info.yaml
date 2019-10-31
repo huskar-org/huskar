@@ -1,0 +1,411 @@
+---
+
+test_get_service_info:
+  args: presented_data,expected_data
+  data:
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: false
+      expected_data:
+        status_code: 200
+        body:
+          data: {}
+          message: ""
+          status: "SUCCESS"
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: null
+      expected_data:
+        status_code: 200
+        body:
+          data: {}
+          message: ""
+          status: "SUCCESS"
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: '{
+          "info": {
+            "balance_policy": "RoundRobin"
+          }
+        }'
+      expected_data:
+        status_code: 200
+        body:
+          data:
+            balance_policy: "RoundRobin"
+          message: ""
+          status: "SUCCESS"
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: '[]'
+      expected_data:
+        status_code: 404
+        body:
+          data: null
+          message: "Invalid data found."
+          status: "NotFound"
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: 'xyz'
+      expected_data:
+        status_code: 404
+        body:
+          data: null
+          message: "Invalid data found."
+          status: "NotFound"
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: '{"info":{"balance_policy": "RoundRobin"}}'
+      expected_data:
+        status_code: 200
+        body:
+          data:
+            balance_policy: "RoundRobin"
+          message: ""
+          status: "SUCCESS"
+
+test_get_cluster_info:
+  args: presented_data,expected_data
+  data:
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: false
+      expected_data:
+        status_code: 200
+        body:
+          data: {}
+          message: ""
+          status: "SUCCESS"
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: null
+      expected_data:
+        status_code: 200
+        body:
+          data: {}
+          message: ""
+          status: "SUCCESS"
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: '{"link": []}'
+      expected_data:
+        status_code: 200
+        body:
+          data: {}
+          message: ""
+          status: "SUCCESS"
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: '{"link": ["foo"]}'
+      expected_data:
+        status_code: 200
+        body:
+          data: {}
+          message: ""
+          status: "SUCCESS"
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: '{
+          "info": {
+            "balance_policy": "Random"
+          }
+        }'
+      expected_data:
+        status_code: 200
+        body:
+          data:
+            balance_policy: "Random"
+          message: ""
+          status: "SUCCESS"
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: '{
+          "info": {
+            "balance_policy": "LeastConnection"
+          },
+          "link": ["foo"]
+        }'
+      expected_data:
+        status_code: 200
+        body:
+          data:
+            balance_policy: "LeastConnection"
+          message: ""
+          status: "SUCCESS"
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: '[]'
+      expected_data:
+        status_code: 404
+        body:
+          data: null
+          message: "Invalid data found."
+          status: "NotFound"
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: 'xyz'
+      expected_data:
+        status_code: 404
+        body:
+          data: null
+          message: "Invalid data found."
+          status: "NotFound"
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: '{"link": "wtf"}'
+      expected_data:
+        status_code: 404
+        body:
+          data: null
+          message: "Invalid data found."
+          status: "NotFound"
+
+
+test_put_service_info:
+  args: presented_data,request_data,expected_data
+  data:
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: false
+      request_data:
+        balance_policy: "LeastConnection"
+      expected_data:
+        status_code: 200
+        body:
+          data: null
+          message: ""
+          status: "SUCCESS"
+        znode:
+          _version: "1"
+          info:
+            balance_policy: "LeastConnection"
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: null
+      request_data:
+        balance_policy: "RoundRobin"
+      expected_data:
+        status_code: 200
+        body:
+          data: null
+          message: ""
+          status: "SUCCESS"
+        znode:
+          _version: "1"
+          info:
+            balance_policy: "RoundRobin"
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: 'invalid_data_here'
+      request_data:
+        balance_policy: "RoundRobin"
+      expected_data:
+        status_code: 200
+        body:
+          data: null
+          message: ""
+          status: "SUCCESS"
+        znode:
+          _version: "1"
+          info:
+            balance_policy: "RoundRobin"
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: '{
+          "info": {
+            "balance_policy": "Random"
+          }
+        }'
+      expected_data:
+      request_data:
+        balance_policy: "LeastConnection"
+      expected_data:
+        status_code: 200
+        body:
+          data: null
+          message: ""
+          status: "SUCCESS"
+        znode:
+          _version: "1"
+          info:
+            balance_policy: "LeastConnection"
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: '{"link":["foo"]}'  # link data is invalid for application node
+      request_data:
+        balance_policy: "LeastConnection"
+      expected_data:
+        status_code: 200
+        body:
+          data: null
+          message: ""
+          status: "SUCCESS"
+        znode:  # "link" field should be disappeared
+          _version: "1"
+          info:
+            balance_policy: "LeastConnection"
+
+test_put_cluster_info:
+  args: presented_data,request_data,expected_data
+  data:
+    - presented_data:
+        path: '/huskar/service/%s/stable'
+        data: false
+      request_data:
+        balance_policy: "LeastConnection"
+      expected_data:
+        status_code: 200
+        body:
+          data: null
+          message: ""
+          status: "SUCCESS"
+        znode:
+          _version: "1"
+          info:
+            balance_policy: "LeastConnection"
+    - presented_data:
+        path: '/huskar/service/%s/stable'
+        data: null
+      request_data:
+        balance_policy: "RoundRobin"
+      expected_data:
+        status_code: 200
+        body:
+          data: null
+          message: ""
+          status: "SUCCESS"
+        znode:
+          _version: "1"
+          info:
+            balance_policy: "RoundRobin"
+    - presented_data:
+        path: '/huskar/service/%s/stable'
+        data: '{"link":["foo"]}'
+      request_data:
+        balance_policy: "LeastConnection"
+      expected_data:
+        status_code: 200
+        body:
+          data: null
+          message: ""
+          status: "SUCCESS"
+        znode:
+          link: ["foo"]  # "link" field should not be changed
+          _version: "1"
+          info:
+            balance_policy: "LeastConnection"
+    - presented_data:
+        path: '/huskar/service/%s/stable'
+        data: "{}"
+      request_data: "233"
+      expected_data:
+        status_code: 400
+        body:
+          data: null
+          message: "The payload must be an object."
+          status: "BadRequest"
+        znode: {}
+
+
+test_delete_service_info:
+  args: presented_data,expected_data
+  data:
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: false
+      expected_data:
+        znode:
+          _version: '1'
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: null
+      expected_data:
+        znode:
+          _version: '1'
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: '[]'
+      expected_data:
+        znode:
+          _version: '1'
+    - presented_data:
+        path: '/huskar/service/%s'
+        data: '{
+          "info": {
+            "balance_policy": "RoundRobin"
+          }
+        }'
+      expected_data:
+        znode:
+          _version: '1'
+
+
+test_delete_cluster_info:
+  args: presented_data,expected_data
+  data:
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: false
+      expected_data:
+        znode:
+          _version: '1'
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: null
+      expected_data:
+        znode:
+          _version: '1'
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: '{"link": []}'
+      expected_data:
+        znode:
+          _version: '1'
+          link: []
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: '{"link": ["foo"]}'
+      expected_data:
+        znode:
+          _version: '1'
+          link: ['foo']
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: '{
+          "info": {
+            "balance_policy": "Random"
+          }
+        }'
+      expected_data:
+        znode:
+          _version: '1'
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: '{
+          "info": {
+            "balance_policy": "LeastConnection"
+          },
+          "link": ["foo"]
+        }'
+      expected_data:
+        znode:
+          _version: '1'
+          link: ['foo']
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: '[]'
+      expected_data:
+        znode:
+          _version: '1'
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: 'xyz'
+      expected_data:
+        znode:
+          _version: '1'
+    - presented_data:
+        path: '/huskar/service/%s/beta'
+        data: '{"link": "wtf"}'
+      expected_data:
+        znode:
+          _version: '1'

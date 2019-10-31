@@ -1,0 +1,35 @@
+---
+
+test_change_password:
+  args: input_password,hashed_password
+  data:
+    - input_password: 'x'
+      hashed_password: '54a2f7f92a5f975d8096af77a126edda7da60c5aa872ef1b871701ae'
+    - input_password: 'fainiung2uoP4cho7joh1ahCaeTho6qu'
+      hashed_password: 'a336148a6338aa0b17861dcb0bb554f9c1654d15a458e5324dd679a2'
+    - input_password: '蛤'
+      hashed_password: '0c5f75f952b01236f59457927493cd961bf676bd8a0ca646daae2a86'
+  dataids:
+    - sample_1
+    - sample_2
+    - sample_3
+
+test_check_password:
+  args: present_password,input_password
+  data:
+    - present_password: '0808f64e60d58979fcb676c96ec938270dea42445aeefcd3a4e6f8db'
+      input_password:
+        correct: 'foo'
+        incorrect: 'bar'
+    - present_password: '07daf010de7f7f0d8d76a76eb8d1eb40182c8d1e7a3877a6686c9bf0'
+      input_password:
+        correct: 'bar'
+        incorrect: ''
+    - present_password: '0c5f75f952b01236f59457927493cd961bf676bd8a0ca646daae2a86'
+      input_password:
+        correct: '蛤'
+        incorrect: '赛艇'
+  dataids:
+    - sample_1
+    - sample_2
+    - sample_3

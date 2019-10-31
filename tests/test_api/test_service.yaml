@@ -1,0 +1,171 @@
+---
+
+valid_service:
+  args: key,value,runtime,whole
+  data:
+    - key: '169.254.0.1_5000'
+      value: '{"ip":"169.254.0.1","port":{"main":5000},"meta":{"protocol":"http"},"idc":"SH-QC","cluster":"alpha"}'
+      runtime: null
+      whole: '{"ip":"169.254.0.1","port":{"main":5000},"meta":{"protocol":"http"},"idc":"SH-QC","cluster":"alpha"}'
+    - key: '169.254.1.1_5000'
+      value: '{"ip":"169.254.1.1","port":{"main":5000},"meta":{"protocol":"http", "version": null}}'
+      runtime: '{"state": "up"}'
+      whole: '{"ip":"169.254.1.1","port":{"main":5000},"state":"up","meta":{"protocol": "http", "version": ""}}'
+    - key: '169.254.1.2_5000'
+      value: '{"ip": "169.254.1.2","port":{"main": 5000},"state":"up","other":"test"}'
+      runtime: '{"state": "up"}'
+      whole: '{"ip": "169.254.1.2","meta":{},"port":{"main": 5000},"state":"up"}'
+  dataids:
+    - '169.254.0.1_5000'
+    - '169.254.1.1_5000_up'
+    - '169.254.1.2_5000_up'
+
+service_cluster_validate_failure:
+  args: cluster_name,error_response,key,value
+  data:
+    - cluster_name: 'direct'
+      error_response:
+          status_code: 400
+          message: 'Cluster name "direct" are not allowed in Huskar.'
+      key: '169.254.0.1_5000'
+      value: '{"ip":"169.254.0.1","port":{"main":5000},"meta":{"protocol":"http"},"idc":"SH-QC","cluster":"alpha"}'
+
+valid_container_service:
+  args: key,value
+  data:
+    - key: 'b1b800dae3fca57fcb429615ff3e0a7054c59206640f1ef4dd30c12eccfdde43'
+      value: '{"ip":"169.254.0.1","port":{"main":5000},"state":"up","meta":{}}'
+
+invalid_service:
+  args: key,value,runtime,error_reason,status
+  data:
+    - key: '169.254.0.1_5000'
+      value: null
+      runtime: null
+      error_reason: 'either "value" or "runtime" should be provided.'
+      status: 'BadRequest'
+    - key: '169.254.1.1_5000'
+      value: null
+      runtime: '{"state": "up"}'
+      error_reason: '`value` should be provided while creating service.'
+      status: 'BadRequest'
+    - key: '169.254.2.256_5000'
+      value: '{"ip":"169.254.2.256","port":{"main":5000}}'
+      runtime: null
+      error_reason: '{"ip": ["illegal IP address"]}'
+      status: 'ValidationError'
+    - key: '169.254.3_5000'
+      value: '{"ip":"169.254.3","port":{"main":5000}}'
+      runtime: '{"state": "up"}'
+      error_reason: '{"ip": ["illegal IP address"]}'
+      status: 'ValidationError'
+    - key: '169.254.4.1_5000'
+      value: '{"ip":"169.254.4.1"}'
+      runtime: null
+      error_reason: '{"port": ["port must be provided in instance value"]}'
+      status: 'ValidationError'
+    - key: '169.254.5.1_5000'
+      value: '{"ip":"169.254.5.1","port":5000}'
+      runtime: null
+      error_reason: '{"port": ["port must be a dict, eg: {\"port\":{\"main\": 8080}"]}'
+      status: 'ValidationError'
+    - key: '169.254.6.1_5000'
+      value: '{"ip":"169.254.6.1","port":{"alternative":5000}}'
+      runtime: null
+      error_reason: >-
+        {"port": ["main port is required"]}
+      status: 'ValidationError'
+    - key: '169.254.7.1_5000'
+      value: '{"ip":"169.254.7.1","port":{"main":65536}}'
+      runtime: null
+      error_reason: '{"port": {"main": ["Must be between 1 and 65535."]}}'
+      status: 'ValidationError'
+    - key: '169.254.8.1_5000'
+      value: '*****'
+      runtime: null
+      error_reason: 'request data is not json format.'
+      status: 'BadRequest'
+    - key: '169.254.9.1_5000'
+      value: '{"ip":"169.254.9.1","port":{"main":5000}}'
+      runtime: '*****'
+      error_reason: 'request data is not json format.'
+      status: 'BadRequest'
+    - key: '169.254.10.1_5000'
+      value: '{"port":{"main":5000}}'
+      runtime: '{"state": "up"}'
+      error_reason: '{"ip": ["ip must be provided in instance value"]}'
+      status: 'ValidationError'
+  dataids:
+    - '169.254.0.1_5000'
+    - '169.254.1.1_5000_up'
+    - '169.254.2.256_5000'
+    - '169.254.3_5000_up'
+    - '169.254.4.256_port_not_specific'
+    - '169.254.5.256_port_invalid'
+    - '169.254.6.256_port_no_main'
+    - '169.254.7.256_port_overflow'
+    - '169.254.8.256_value_invalid'
+    - '169.254.9.256_runtime_invalid'
+    - '169.254.10.256_ip_not_specific'
+
+valid_runtime_patch:
+  args: key,present,patch,result
+  data:
+    - key: '169.254.0.1_5000'
+      present:
+        value: '{"ip":"169.254.0.1","port":{"main":5000}}'
+        runtime: null
+      patch: '{"state":"up"}'
+      result:
+        value: {'ip': '169.254.0.1', 'port': {'main': 5000}, 'state': 'up'}
+        runtime: {'state': 'up'}
+    - key: '169.254.1.1_5000'
+      present:
+        value: '{"ip":"169.254.1.1","port":{"main":5000},"state":"down"}'
+        runtime: null
+      patch: '{"state":"up"}'
+      result:
+        value: {'ip': '169.254.1.1', 'port': {'main': 5000}, 'state': 'up'}
+        runtime: {'state': 'up'}
+    - key: '169.254.2.1_5000'
+      present:
+        value: '{"ip":"169.254.2.1","port":{"main":5000}}'
+        runtime: '{"state":"up"}'
+      patch: '{"state":"down"}'
+      result:
+        value: {'ip': '169.254.2.1', 'port': {'main': 5000}, 'state': 'down'}
+        runtime: {'state': 'down'}
+  dataids:
+    - '169.254.0.1_5000'
+    - '169.254.1.1_5000'
+    - '169.254.2.1_5000'
+
+invalid_runtime_patch:
+  args: key,patch,error_reason,status
+  data:
+    - key: '169.254.0.1_5000'
+      patch: ''
+      error_reason: 'request data is not json format.'
+      status: 'BadRequest'
+    - key: '169.254.1.1_5000'
+      patch: '{"status":"up"}'
+      error_reason: 'runtime must contain state only.'
+      status: 'BadRequest'
+    - key: '169.254.2.1_5000'
+      patch: '{"state":"up","foo":1}'
+      error_reason: 'runtime must contain state only.'
+      status: 'BadRequest'
+    - key: '169.254.3.1_5000'
+      patch: '{"state":"on"}'
+      error_reason: 'runtime state must be "up" or "down".'
+      status: 'BadRequest'
+    - key: '169.254.4.1_5000'
+      patch: '{"state":"up"}'
+      error_reason: '`value` should be provided while creating service.'
+      status: 'BadRequest'
+  dataids:
+    - '169.254.0.1_5000_invalid_json'
+    - '169.254.1.1_5000_invalid_key'
+    - '169.254.2.1_5000_invalid_key'
+    - '169.254.3.1_5000_invalid_value'
+    - '169.254.4.1_5000_missing_instance'

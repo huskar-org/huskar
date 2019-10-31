@@ -1,0 +1,107 @@
+
+test_fetch_via_api:
+  args: switch_on,allow_users,path,is_fe,allow
+  data:
+    - switch_on: false
+      allow_users: {}
+      path: '/api/.well-known/common'
+      is_fe: false
+      allow: true
+    - switch_on: true
+      allow_users: {}
+      path: '/api/health_check'
+      is_fe: false
+      allow: true
+    - switch_on: true
+      allow_users: {'api.well_known_common': ['*']}
+      path: '/api/.well-known/common'
+      is_fe: false
+      allow: true
+    - switch_on: true
+      allow_users: {'api.well_known_common': ['{application}']}
+      path: '/api/.well-known/common'
+      is_fe: false
+      allow: true
+    - switch_on: true
+      allow_users: {}
+      path: '/api/.well-known/common'
+      is_fe: true
+      allow: true
+    - switch_on: true
+      allow_users: {}
+      path: '/api/.well-known/common'
+      is_fe: false
+      allow: false
+    - switch_on: true
+      allow_users: {}
+      path: '/test'
+      is_fe: false
+      allow: true
+  dataids:
+    - allow_switch_off
+    - allow_must_allow_endpoint
+    - allow_*
+    - allow_user
+    - allow_fe
+    - allow_not_found_api
+    - disallow
+
+test_update_via_api:
+  args: switch_on,allow_users,path,is_fe,data,status_code,message
+  data:
+    - switch_on: false
+      allow_users: {}
+      path: '/api/config/{application}/233'
+      data: {'key': 'test_key', 'value': 'test_value'}
+      is_fe: false
+      status_code: 200
+      message: ''
+    - switch_on: true
+      allow_users: {}
+      path: '/api/application/{application}/token'
+      data: {}
+      is_fe: false
+      status_code: 200
+      message: ''
+    - switch_on: true
+      allow_users: {'api.config': ['*']}
+      path: '/api/config/{application}/233'
+      data: {'key': 'test_key', 'value': 'test_value'}
+      is_fe: false
+      status_code: 200
+      message: ''
+    - switch_on: true
+      allow_users: {'api.config': ['{application}']}
+      path: '/api/config/{application}/233'
+      data: {'key': 'test_key', 'value': 'test_value'}
+      is_fe: false
+      status_code: 200
+      message: ''
+    - switch_on: true
+      allow_users: {}
+      path: '/api/config/{application}/233'
+      data: {'key': 'test_key', 'value': 'test_value'}
+      is_fe: true
+      status_code: 200
+      message: ''
+    - switch_on: true
+      allow_users: {}
+      path: '/test'
+      is_fe: false
+      status_code: 404
+      message: 'The requested URL was not found on the server.  If you entered the URL manually please check your spelling and try again.'
+    - switch_on: true
+      allow_users: {}
+      path: '/api/config/{application}/233'
+      data: {'key': 'test_key', 'value': 'test_value'}
+      is_fe: false
+      status_code: 403
+      message: 'Request this api is forbidden, please access huskar console instead'
+  dataids:
+    - allow_switch_off
+    - allow_must_allow_endpoint
+    - allow_*
+    - allow_user
+    - allow_fe
+    - allow_not_found_api
+    - disallow

@@ -1,0 +1,196 @@
+---
+
+test_get_route:
+  args: tree,route
+  data:
+    - tree: []
+      route: []
+    - tree:
+      - path: '/huskar/service/%(test_application_name)s'
+        data: '{"dependency":{"base.foo":["stable"], "base.bar": ["testing"]}}'
+      - path: '/huskar/service/base.foo/stable'
+        data: '{"route":{"%(test_application_name)s":"foo"}}'
+      - path: '/huskar/service/base.bar/stable'
+        data: '{"route":{"%(test_application_name)s":"bar"}}'
+      route:
+        - application_name: 'base.foo'
+          cluster_name: 'foo'
+          intent: 'direct'
+    - tree:
+      - path: '/huskar/service/%(test_application_name)s'
+        data: '{"dependency":{"base.foo":["stable"], "base.bar": ["stable"]}}'
+      - path: '/huskar/service/base.foo/stable'
+        data: '{"route":{"unknown":"foo"}}'
+      - path: '/huskar/service/base.bar/stable'
+        data: '{"route":{"%(test_application_name)s":"bar"}}'
+      route:
+        - application_name: 'base.bar'
+          cluster_name: 'bar'
+          intent: 'direct'
+        - application_name: 'base.foo'
+          cluster_name: null
+          intent: 'direct'
+    - tree:
+      - path: '/huskar/service/%(test_application_name)s'
+        data: '{"dependency":{"base.foo":["stable"], "base.bar": ["stable"]}}'
+      route:
+        - application_name: 'base.bar'
+          cluster_name: null
+          intent: 'direct'
+        - application_name: 'base.foo'
+          cluster_name: null
+          intent: 'direct'
+    - tree:
+      - path: '/huskar/service/%(test_application_name)s'
+        data: '{"dependency":{"base.foo":["t"], "base.bar": ["t"]}}'
+      route: []
+
+test_set_route:
+  args: tree,dest,result
+  data:
+    - tree:
+        - path: '/huskar/service/base.foo/stable'  # Must override
+          data: ''
+      dest:
+        application_name: 'base.foo'
+        cluster_name: 'foo'
+      result:
+        - path: '/huskar/service/%(test_application_name)s'
+          data: '{"dependency":{"base.foo":["stable"]},"_version":"1"}'
+        - path: '/huskar/service/base.foo/stable'
+          data: '{"route":{"%(test_application_name)s":"foo"},"_version":"1"}'
+    - tree:
+        - path: '/huskar/service/%(test_application_name)s'
+          data: '{"dependency":{"base.foo":["testing"]}}'
+        - path: '/huskar/service/base.bar/stable'  # Must override
+          data: ''
+      dest:
+        application_name: 'base.bar'
+        cluster_name: 'bar'
+      result:
+        - path: '/huskar/service/%(test_application_name)s'
+          data: '{"dependency":{"base.foo":["testing"],"base.bar":["stable"]},"_version":"1"}'
+        - path: '/huskar/service/base.bar/stable'
+          data: '{"route":{"%(test_application_name)s":"bar"},"_version":"1"}'
+    - tree:
+        - path: '/huskar/service/%(test_application_name)s'
+          data: '{"dependency":{"base.foo":["testing"]}}'
+        - path: '/huskar/service/base.foo/stable'
+          data: '{"route":{"abc":"def"}}'
+      dest:
+        application_name: 'base.foo'
+        cluster_name: 'baz'
+      result:
+        - path: '/huskar/service/%(test_application_name)s'
+          data: '{"dependency":{"base.foo":["stable","testing"]},"_version":"1"}'
+        - path: '/huskar/service/base.foo/stable'
+          data: '{"route":{"%(test_application_name)s":"baz","abc":"def"},"_version":"1"}'
+
+test_delete_route:
+  args: tree,deleting,result
+  data:
+    - tree:
+        - path: '/huskar/service/%(test_application_name)s'
+          data: '{"dependency":{"base.foo":["stable","t"]},"_version":"1"}'
+        - path: '/huskar/service/base.foo/stable'
+          data: '{"route":{"%(test_application_name)s":"foo","abc":"def"},"_version":"1"}'
+      deleting:
+        application_name: 'base.foo'
+      result:
+        - path: '/huskar/service/%(test_application_name)s'
+          data: '{"dependency":{"base.foo":["t"]},"_version":"1"}'
+        - path: '/huskar/service/base.foo/stable'
+          data: '{"route":{"abc":"def"},"_version":"1"}'
+
+test_get_default_route:
+  args: tree,result
+  data:
+    - tree: []
+      result:
+        default_route:
+          overall:
+            direct: 'channel-stable-1'
+        global_default_route:
+          direct: 'channel-stable-1'
+    - tree:
+      - path: '/huskar/service/%(test_application_name)s'
+        data: '{"default_route":{"alta1":{"direct":"channel-stable-2"}}}'
+      result:
+        default_route:
+          overall:
+            direct: 'channel-stable-1'
+          alta1:
+            direct: 'channel-stable-2'
+        global_default_route:
+          direct: 'channel-stable-1'
+
+test_set_default_route:
+  args: tree,data,result
+  data:
+    - tree: []
+      data:
+        cluster_name: 'foo'
+      result:
+        status: SUCCESS
+        message: ''
+        data:
+          default_route:
+            overall:
+              direct: 'foo'
+          global_default_route:
+            direct: 'channel-stable-1'
+    - tree:
+      - path: '/huskar/service/%(test_application_name)s'
+        data: '{"default_route":{"alta1":{"direct":"channel-stable-2"}}}'
+      data:
+        ezone: 'alta1'
+        intent: 'direct'
+        cluster_name: 'foo'
+      result:
+        status: SUCCESS
+        message: ''
+        data:
+          default_route:
+            overall:
+              direct: 'channel-stable-1'
+            alta1:
+              direct: 'foo'
+          global_default_route:
+            direct: 'channel-stable-1'
+    - tree: []
+      data:
+        ezone: 'alta1'
+        intent: 'direct'
+        cluster_name: 'alta1-channel-stable-1'
+      result:
+        status: InvalidArgument
+        message: 'Unexpected prefixed cluster_name'
+        data: null
+
+test_discard_default_route:
+  args: tree,data,result
+  data:
+    - tree:
+      - path: '/huskar/service/%(test_application_name)s'
+        data: '{"default_route":{"overall":{"direct":"foo"},"alta1":{"direct":"channel-stable-2"}}}'
+      data:
+        intent: 'direct'
+      result:
+        status: SUCCESS
+        message: ''
+        data:
+          default_route:
+            overall:
+              direct: 'channel-stable-1'
+            alta1:
+              direct: 'channel-stable-2'
+          global_default_route:
+            direct: 'channel-stable-1'
+    - tree: []
+      data:
+        ezone: 'something'
+        intent: 'direct'
+      result:
+        status: InvalidArgument
+        message: 'Unexpected ezone'
+        data: null

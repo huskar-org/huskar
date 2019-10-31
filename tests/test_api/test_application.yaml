@@ -1,0 +1,152 @@
+---
+
+test_list_applications_under_team:
+  args: present,expected
+  data:
+    - present: []
+      expected:
+        applications: []
+    - present: ['foo', 'bar']
+      expected:
+        applications: ['foo', 'bar']
+
+test_list_all_applications:
+  args: present_apps,present_auth,expected_all,expected_authorized
+  data:
+    - present_apps: []
+      present_auth: []
+      expected_all: []
+      expected_authorized: []
+    - present_apps: ['foo', 'bar']
+      present_auth:
+        - name: 'foo'
+          auth: 'read'
+      expected_all: ['foo', 'bar']
+      expected_authorized: ['foo']
+    - present_apps: ['foo', 'bar']
+      present_auth:
+        - name: 'bar'
+          auth: 'write'
+      expected_all: ['foo', 'bar']
+      expected_authorized: ['bar']
+
+test_list_applications_with_route_stage:
+  args: present_apps,present_route_stage,expected_all
+  data:
+    - present_apps: []
+      present_route_stage:
+        alta1-test-1:
+          foo: E
+      expected_all: []
+    - present_apps: ['foo', 'bar']
+      present_route_stage:
+        alta1-test-1:
+          foo: E
+      expected_all:
+        - name: foo
+          route_stage:
+            alta1-test-1: E
+        - name: bar
+          route_stage: {}
+
+test_list_deprecated_applications:
+  args: present_apps,blacklist,legacylist,expected_apps
+  data:
+    - present_apps: ['foo', 'bar', 'baz', 'frog']
+      blacklist: ['baz']
+      legacylist: ['frog']
+      expected_apps:
+        foo: false
+        bar: false
+        frog: true
+
+test_add_application:
+  args: present_apps,present_auth,adding_app,expected_apps,expected_auth
+  data:
+    - present_apps: []
+      present_auth: []
+      adding_app: 'foo'
+      expected_apps: ['foo']
+      expected_auth:
+        - name: 'foo'
+          user: 'foo'
+          auth: 'write'
+    - present_apps: ['bar']
+      present_auth:
+        - name: 'bar'
+          auth: 'read'
+      adding_app: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+      expected_apps: ['bar', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa']
+      expected_auth:
+        - name: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+          user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+          auth: 'write'
+        - name: 'bar'
+          user: '{test_user.username}'
+          auth: 'read'
+        - name: 'bar'
+          user: 'bar'
+          auth: 'write'
+
+test_add_application_without_permission:
+  args: present_apps,present_auth,adding_app
+  data:
+    - present_apps: []
+      present_auth: []
+      adding_app: 'foo'
+    - present_apps: ['bar']
+      present_auth:
+        - name: 'bar'
+          auth: 'read'
+          user: '{test_user.username}'
+      adding_app: 'foo'
+
+test_add_application_with_invalid_name:
+  args: adding_app,err_app
+  data:
+    - adding_app: ''
+      err_app: ''
+    - adding_app: '_foo'
+      err_app: '_foo'
+    - adding_app: '.Foo'
+      err_app: '.Foo'
+    - adding_app: '..'
+      err_app: '..'
+    - adding_app: 'bad_test_'
+      err_app: 'bad_test_'
+    - adding_app: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+      err_app: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    - adding_app: '啦啦啦lala'
+      err_app: '\u5566\u5566\u5566lala'
+
+
+test_delete_application:
+  args: present_apps,present_auth,deleting_app,expected_apps
+  data:
+    - present_apps: ['foo']
+      present_auth: []
+      deleting_app: 'foo'
+      expected_apps: []
+    - present_apps: ['foo']
+      present_auth:
+        - name: 'foo'
+          auth: 'write'
+      deleting_app: 'foo'
+      expected_apps: []
+    - present_apps: ['foo', 'bar']
+      present_auth: []
+      deleting_app: 'foo'
+      expected_apps: ['bar']
+
+test_delete_application_without_permission:
+  args: present_apps,present_auth,deleting_app
+  data:
+    - present_apps: ['foo']
+      present_auth: []
+      deleting_app: 'foo'
+    - present_apps: ['bar']
+      present_auth:
+        - name: 'bar'
+          auth: 'read'
+          user: '{test_user.username}'
+      deleting_app: 'bar'

@@ -1,0 +1,27 @@
+{% extends 'email-base-layout.html' %}
+{% import 'email-base-components.html' as c %}
+
+{%- block preheader -%}
+已为 {{ username }} 创建新的 Huskar 帐号
+{%- endblock -%}
+
+{%- block content -%}
+  <p>Hi there,</p>
+  <p>已创建新的 Huskar 账号, 信息如下:</p>
+  <p>
+    环境: <code>{{ core_config.env }}</code>
+    <br />
+    用户名: <code>{{ username }}</code>
+    <br />
+    初始密码: <code>{{ password }}</code>
+  </p>
+  {{ c.button('点击登录', settings.ADMIN_HOME_URL) }}
+  <p>
+    为了信息安全, <strong>请尽快修改初始密码</strong>并妥善保管。
+  </p>
+  <p>
+    如有疑问, 请发送邮件至
+    <a href="{{ settings.ADMIN_SUPPORT_URL }}">huskar@example.com</a>
+    联系支持.
+  </p>
+{%- endblock -%}

@@ -1,0 +1,7 @@
+[run]
+concurrency = gevent
+branch = True
+
+[report]
+omit =
+    huskar_api/contrib/*

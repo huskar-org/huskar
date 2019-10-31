@@ -1,0 +1,75 @@
+---
+
+test_session_with_max_life_span:
+  args: switch_on,max_life_span,jitter,life_span,exclude,timeout
+  data:
+    - switch_on: false
+      max_life_span: 5
+      jitter: 3
+      life_span: 1
+      exclude: false
+      timeout: 2
+    - switch_on: true
+      max_life_span: 5
+      jitter: 3
+      life_span: 1
+      exclude: true
+      timeout: 2
+    - switch_on: true
+      max_life_span: 3
+      jitter: 2
+      life_span: 0
+      exclude: false
+      timeout: 6
+    - switch_on: true
+      max_life_span: 1
+      jitter: 1
+      life_span: 4
+      exclude: false
+      timeout: 3
+    - switch_on: true
+      max_life_span: 1
+      jitter: 1
+      life_span: 4
+      exclude: true
+      timeout: 5
+    - switch_on: true
+      max_life_span: 5
+      jitter: 3
+      life_span: 1
+      exclude: false
+      timeout: 3
+    - switch_on: true
+      max_life_span: 5
+      jitter: 3
+      life_span: 1
+      exclude: true
+      timeout: 3
+  dataids:
+    - switch_off_no_effect
+    - switch_on_but_exclude_no_effect
+    - switch_on_default_life_span_effect
+    - switch_on_large_life_span_effect
+    - switch_on_large_life_span_but_exclude_no_effect
+    - switch_on_small_life_span_no_effect
+    - switch_on_small_life_span_exclude_no_effect
+
+test_enable_force_cluster_route:
+  args: from_cluster_name,req_dest_cluster,route_dest_cluster,force_dest_cluster,rule,intent,use_route
+  data:
+    - from_cluster_name: 'altc1-test-pre'
+      req_dest_cluster: 'altc1-channel-stable-1'
+      route_dest_cluster: 'altc1-test'
+      force_dest_cluster: 'altc1-test-pre'
+      rule: {'altc1-test-pre': 'altc1-test-pre',
+             'altc1-test-pre@direct': 'altc1-test-pre',}
+      intent: 'direct'
+      use_route: false
+    - from_cluster_name: 'altc1-test-pre'
+      req_dest_cluster: 'direct'
+      route_dest_cluster: 'altc1-test'
+      force_dest_cluster: 'altc1-test-pre'
+      rule: {'altc1-test-pre': 'altc1-test-pre',
+             'altc1-test-pre@direct': 'altc1-test-pre',}
+      intent: 'direct'
+      use_route: true

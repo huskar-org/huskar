@@ -1,0 +1,63 @@
+
+test_anonymous_with_rate_limit:
+  args: configs
+  data:
+    - configs: {
+        '__anonymous__': {
+            'rate': 1,
+            'capacity': 3,
+        }
+      }
+    - configs: {
+        '127.0.0.1': {
+            'rate': 1,
+            'capacity': 3,
+        }
+      }
+    - configs: {
+        '__default__': {
+            'rate': 1,
+            'capacity': 3,
+        }
+      }
+  dataids:
+    - __anonymous__
+    - ip
+    - __default__
+
+test_logged_with_rate_limit:
+  args: configs,use_username
+  data:
+    - configs: {
+        '__anonymous__': {
+            'rate': 100,
+            'capacity': 300,
+        },
+        '127.0.0.1': {
+            'rate': 100,
+            'capacity': 300,
+        },
+        '__default__': {
+            'rate': 100,
+            'capacity': 300,
+        }
+      }
+      use_username: true
+    - configs: {
+        '__anonymous__': {
+            'rate': 100,
+            'capacity': 300,
+        },
+        '127.0.0.1': {
+            'rate': 100,
+            'capacity': 300,
+        },
+        '__default__': {
+            'rate': 1,
+            'capacity': 3,
+        }
+      }
+      use_username: false
+  dataids:
+    - username_config
+    - __default__

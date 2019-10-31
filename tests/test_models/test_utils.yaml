@@ -1,0 +1,78 @@
+---
+
+test_merge_instance_list:
+  args: other_instance_list,user_instance_list,result
+  data:
+    - other_instance_list: []
+      user_instance_list: []
+      result: []
+    - other_instance_list:
+        - {'key': 'test1', 'cluster': 'foo', 'value': 'value1'}
+        - {'key': 'test2', 'cluster': 'bar', 'value': 'value2'}
+      user_instance_list: []
+      result: []
+    - other_instance_list: []
+      user_instance_list:
+        - {'key': 'test1', 'cluster': 'test_cluster', 'value': 'user_value1'}
+        - {'key': 'test2', 'cluster': 'test_cluster', 'value': 'user_value2'}
+      result:
+        - {'key': 'test1', 'cluster': 'test_cluster', 'value': 'user_value1'}
+        - {'key': 'test2', 'cluster': 'test_cluster', 'value': 'user_value2'}
+    - other_instance_list:
+        - {'key': 'test1', 'cluster': 'overall', 'value': 'value1'}
+        - {'key': 'test2', 'cluster': 'overall', 'value': 'value2'}
+      user_instance_list: []
+      result:
+        - {'key': 'test1', 'cluster': 'test_cluster', 'value': 'value1'}
+        - {'key': 'test2', 'cluster': 'test_cluster', 'value': 'value2'}
+    - other_instance_list:
+        - {'key': 'test1', 'cluster': 'overall', 'value': 'value1'}
+        - {'key': 'test2', 'cluster': 'overall', 'value': 'value2'}
+      user_instance_list:
+        - {'key': 'test3', 'cluster': 'test_cluster', 'value': 'user_value3'}
+        - {'key': 'test4', 'cluster': 'test_cluster', 'value': 'user_value4'}
+      result:
+        - {'key': 'test1', 'cluster': 'test_cluster', 'value': 'value1'}
+        - {'key': 'test2', 'cluster': 'test_cluster', 'value': 'value2'}
+        - {'key': 'test3', 'cluster': 'test_cluster', 'value': 'user_value3'}
+        - {'key': 'test4', 'cluster': 'test_cluster', 'value': 'user_value4'}
+    - other_instance_list:
+        - {'key': 'test1', 'cluster': 'overall', 'value': 'value1'}
+        - {'key': 'test2', 'cluster': 'overall', 'value': 'value2'}
+      user_instance_list:
+        - {'key': 'test2', 'cluster': 'test_cluster', 'value': 'user_value2'}
+        - {'key': 'test3', 'cluster': 'test_cluster', 'value': 'user_value3'}
+      result:
+        - {'key': 'test1', 'cluster': 'test_cluster', 'value': 'value1'}
+        - {'key': 'test2', 'cluster': 'test_cluster', 'value': 'user_value2'}
+        - {'key': 'test3', 'cluster': 'test_cluster', 'value': 'user_value3'}
+    - other_instance_list:
+        - {'key': 'test1', 'cluster': 'overall', 'value': 'value1'}
+        - {'key': 'test2', 'cluster': 'overall', 'value': 'value2'}
+      user_instance_list:
+        - {'key': 'test2', 'cluster': 'test_cluster', 'value': 'user_value2'}
+        - {'key': 'test3', 'cluster': 'test_cluster', 'value': 'user_value3'}
+        - {'key': 'HUSKAR_BATCH_CONFIG_INCLUSIVE_KEYS', 'cluster': 'test_cluster', 'value': '["test2"]'}
+      result:
+        - {'key': 'test2', 'cluster': 'test_cluster', 'value': 'user_value2'}
+    - other_instance_list:
+        - {'key': 'test1', 'cluster': 'overall', 'value': 'value1'}
+        - {'key': 'test2', 'cluster': 'overall', 'value': 'value2'}
+      user_instance_list:
+        - {'key': 'test2', 'cluster': 'test_cluster', 'value': 'user_value2'}
+        - {'key': 'test3', 'cluster': 'test_cluster', 'value': 'user_value3'}
+        - {'key': 'HUSKAR_BATCH_CONFIG_INCLUSIVE_KEYS', 'cluster': 'test_cluster', 'value': '['}
+      result:
+        - {'key': 'test1', 'cluster': 'test_cluster', 'value': 'value1'}
+        - {'key': 'test2', 'cluster': 'test_cluster', 'value': 'user_value2'}
+        - {'key': 'test3', 'cluster': 'test_cluster', 'value': 'user_value3'}
+        - {'key': 'HUSKAR_BATCH_CONFIG_INCLUSIVE_KEYS', 'cluster': 'test_cluster', 'value': '['}
+  dataids:
+    - no-data
+    - no-userful-data
+    - no-overall
+    - all-overall
+    - extend-overall
+    - overwrite-overall
+    - whitelist
+    - whitelist-skipped

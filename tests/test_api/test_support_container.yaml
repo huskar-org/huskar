@@ -1,0 +1,20 @@
+---
+
+test_list_registry:
+  args: preset,result
+  data:
+    - preset: []
+      result: []
+    - preset:
+        - ['base.foo', 'alpha_stable']
+      result:
+        - application_name: 'base.foo'
+          cluster_name: 'alpha_stable'
+    - preset:
+        - ['base.foo', 'alpha_stable']
+        - ['base.bar', 'alpha_dev']
+      result:
+        - application_name: 'base.bar'
+          cluster_name: 'alpha_dev'
+        - application_name: 'base.foo'
+          cluster_name: 'alpha_stable'

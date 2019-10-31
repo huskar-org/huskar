@@ -1,0 +1,85 @@
+---
+
+test_add_webhook_subscriptions:
+  args: present_data,input_data
+  data:
+    - present_data:
+        - webhook_url: ''
+          event_list: []
+      input_data:
+        webhook_type: 1
+        webhook_url: 'http://www.foo.bar'
+        event_list: ['CREATE_CONFIG_CLUSTER','DELETE_CONFIG_CLUSTER']
+    - present_data:
+        - webhook_url: 'http://www.foo.bar'
+          event_list: ['CREATE_CONFIG_CLUSTER']
+      input_data:
+        webhook_type: 0
+        webhook_url: 'http://www.foo.bar'
+        event_list: ['CREATE_CONFIG_CLUSTER', 'DELETE_CONFIG_CLUSTER']
+
+test_add_webhook_subscriptions_with_invalid_arguments:
+  args: input_data,expected_result
+  data:
+    - input_data:
+        webhook_url: 'http://1234123'
+        event_list: []
+      expected_result:
+        status_code: 400
+        status: 'ValidationError'
+        message: '{"webhook_url": ["Not a valid URL."]}'
+    - input_data:
+        webhook_url: 'http://www.foo.bar'
+        event_list: ['CREATE_CONFIG_CLUSTER', '嗷']
+      expected_result:
+        status_code: 400
+        status: 'ValidationError'
+        message: '{"event_list": {"1": ["not a valid event type"]}}'
+
+
+test_update_webhook_subscriptions:
+  args: present_data,input_data
+  data:
+    - present_data:
+        - webhook_url: 'http://www.foo.bar'
+          webhook_type: 0
+          event_list: ['CREATE_CONFIG_CLUSTER']
+      input_data:
+        webhook_url: 'http://update.foo.bar'
+        event_list: ['CREATE_CONFIG_CLUSTER','DELETE_CONFIG_CLUSTER']
+    - present_data:
+        - webhook_url: 'http://update.foo.bar'
+          webhook_type: 1
+          event_list: []
+      input_data:
+        webhook_url: 'http://update.foo.bar'
+        event_list: ['CREATE_CONFIG_CLUSTER','DELETE_CONFIG_CLUSTER']
+
+test_delete_webhook:
+  args: present_data,input_data
+  data:
+    - present_data:
+        - webhook_url: 'http://www.foo.bar'
+          webhook_type: 1
+          event_list: []
+      input_data:
+        webhook_url: 'http://www.foo.bar'
+    - present_data:
+        - webhook_url: 'http://www.foo.bar'
+          webhook_type: 0
+          event_list: ['CREATE_CONFIG_CLUSTER']
+      input_data:
+        webhook_url: 'http://www.foo.bar'
+        webhook_type: 0
+        event_list: ['CREATE_CONFIG_CLUSTER', 'DELETE_CONFIG_CLUSTER']
+
+test_get_webhook_subscriptions_with_application:
+  args: present_data
+  data:
+    - present_data:
+        - webhook_url: 'http://www.foo.bar'
+          event_list: ['GRANT_APPLICATION_AUTH', 'DISMISS_APPLICATION_AUTH']
+        - webhook_url: 'http://test.foo.bar'
+          event_list: ['CREATE_SWITCH_CLUSTER', 'DELETE_SWITCH_CLUSTER']
+        - webhook_url: 'http://www.foo.bar'
+          event_list: ['CREATE_CONFIG_CLUSTER', 'DELETE_CONFIG_CLUSTER']

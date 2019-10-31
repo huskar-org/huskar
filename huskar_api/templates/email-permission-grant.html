@@ -1,0 +1,24 @@
+{% extends 'email-base-layout.html' %}
+{% import 'email-base-components.html' as c %}
+
+{%- block preheader -%}
+Huskar 权限变更: 授权 {{ username }} {{ c.permission_label(authority) }} {{ application_name}}
+{%- endblock -%}
+
+{%- block content -%}
+  <p>Hi there,</p>
+  <p>
+    您的 Huskar 权限已发生变更, <code>{{ c.current_user_label() }}</code>
+    授权您在 {{ core_config.env }} 环境
+    <strong>{{ c.permission_label(authority) }}</strong> 应用 <code>{{ application_name}}</code>,
+    权限已即时生效.
+  </p>
+  {{ c.button('立即查看', settings.ADMIN_HOME_URL) }}
+  <p>
+    如果您遗忘了该环境的用户名或密码, 请在登录页面点击忘记密码链接, 自助重置.
+
+    如有其他疑问, 请发送邮件至
+    <a href="{{ settings.ADMIN_SUPPORT_URL }}">huskar@example.com</a>
+    联系支持.
+  </p>
+{%- endblock -%}

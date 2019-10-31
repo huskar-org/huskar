@@ -1,0 +1,113 @@
+---
+
+test_service_meta:
+  args: meta,expected_meta
+  data:
+    - meta: null
+      expected_meta: {}
+    - meta: {'age': 1, 'name': 'test'}
+      expected_meta: {'age': '1', 'name': 'test'}
+    - meta: {'age': null, 'name': 'test'}
+      expected_meta: {'age': '', 'name': 'test'}
+
+test_invalid_meta:
+  args: meta
+  data:
+    - meta: [1, 2, 3]
+    - meta: 123
+
+test_long_polling_validation:
+  args: application,clusters
+  data:
+    - application: 'foo.test'
+      clusters: ['alpha', 'beta']
+    - application: 'redis.foo.test.alpha.test.cluster1'
+      clusters: ['alpha']
+
+test_invalid_long_polling_input:
+  args: application,clusters
+  data:
+    - application: '/'
+      clusters: ['alpha']
+    - application: 'foo.test'
+      clusters: ['蛤']
+    - application: 'foo.test'
+      clusters: ['', 'stable']
+    - application: ''
+      clusters: ['alpha']
+    - application: '.'
+      clusters: ['alpha']
+
+test_instance:
+  args: fields,optional_fields
+  data:
+    - fields:
+        application: 'foo.test'
+        cluster: 'stable'
+        key: null
+      optional_fields: ['key']
+    - fields:
+        application: 'bar.foo'
+        cluster: 'stable'
+        key: 'foo.test'
+        comment: null
+      optional_fields: ['comment']
+    - fields:
+        application: 'bar.foo'
+        cluster: 'stable'
+      optional_fields: []
+    - fields:
+        application: 'foo.test'
+        cluster: 'stable'
+        key: 'test'
+        value: '我喜欢¥'
+      optional_fields: []
+
+test_invalid_instance_fields:
+  args: fields,optional_fields,error
+  data:
+    - fields:
+        application: '蛤'
+        cluster: 'stable'
+      optional_fields: []
+      error:
+        application: [ 'AppID(蛤) should consist by most 128 characters of numbers, lowercase letters and underscore.'
+        ]
+    - fields:
+        application: '$foo.test'
+        cluster: 'stable'
+      optional_fields: []
+      error:
+        application: [
+            'AppID($foo.test) should consist by most 128 characters of numbers, lowercase letters and underscore.'
+        ]
+    - fields:
+        application: 'foo.test'
+        cluster: '蛤'
+      optional_fields: []
+      error:
+        cluster: [
+          'Cluster(蛤) should consist by most 64 characters of numbers, letters and underscores, and not starts with dots.'
+        ]
+    - fields:
+        application: 'foo.test'
+        cluster: 'stable'
+        key: 'test \n\t'
+      optional_fields: []
+      error:
+        key: ['Key(test \n\t) should not starts with dots or contains CRLF.']
+    - fields:
+        application: 'foo.test'
+        cluster: 'stable'
+        key: '蛤?'
+      optional_fields: []
+      error:
+        key: ['Key(蛤?) contains unicode characters.']
+    - fields:
+        application: 'foo.test'
+        cluster: 'stable'
+        key: 'test'
+        value: ''
+      optional_fields: []
+      error:
+        value: ["Value can't be a empty string."]

@@ -1,0 +1,229 @@
+
+use_alta_route_config: &use_alta_route_config
+  system_ezone: 'fa1'
+  request_domain: 'a.example.com'
+  present_route_stages: {
+    'channel-stable-1': {'<application_name>': 'E'},
+    'foo-channel-stable-1': {'foo': 'D'},
+    'fc1-channel-stable-1': {'foo': 'D'},
+  }
+  route_hijack_list: {'<application_name>': 'S', 'foobar': 'S'}
+  default_hijack_mode: {'overall': 'S', 'fa1': 'S', 'fb1': 'C', 'fc1': 'S'}
+  expected_hijack_mode: 'E'
+
+use_altb_route_config: &use_altb_route_config
+  system_ezone: 'fa1'
+  request_domain: 'b.example.com'
+  present_route_stages: {
+    'fb1-channel-stable-1': {'<application_name>': 'E'},
+    'foo-channel-stable-1': {'foo': 'D'},
+    'fc1-channel-stable-1': {'foo': 'D'},
+  }
+  route_hijack_list: {'<application_name>': 'S', 'foobar': 'S'}
+  default_hijack_mode: {'overall': 'S', 'fa1': 'S', 'fb1': 'C', 'fc1': 'S'}
+  expected_hijack_mode: 'E'
+
+use_altc_route_config: &use_altc_route_config
+  system_ezone: 'fa1'
+  request_domain: 'c.example.com'
+  present_route_stages: {
+    'fc1-channel-stable-1': {'<application_name>': 'E'},
+    'foo-channel-stable-1': {'foo': 'D'},
+  }
+  route_hijack_list: {'<application_name>': 'S', 'foobar': 'S'}
+  default_hijack_mode: {'overall': 'S', 'fa1': 'S', 'fb1': 'C', 'fc1': 'S'}
+  expected_hijack_mode: 'E'
+
+test_route_hijack_mode_get_ezone_via_host:
+  args: system_ezone,request_domain,route_hijack_list,present_route_stages,default_hijack_mode,expected_hijack_mode
+  data:
+    - system_ezone: 'fa1'
+      request_domain: 'unknown.example.com'
+      present_route_stages: {
+        'channel-stable-1': {'<application_name>': 'S'},
+        'foo-channel-stable-1': {'foo': 'E'},
+        'fb1-channel-stable-1': {'foo': 'E'},
+        'fc1-channel-stable-1': {'foo': 'E'},
+      }
+      route_hijack_list: {'<application_name>': 'C', 'foobar': 'E'}
+      default_hijack_mode: {'overall': 'E', 'fa1': 'E', 'fb1': 'C', 'fc1': 'E'}
+      expected_hijack_mode: 'S'
+    - system_ezone: 'fa1'
+      request_domain: '0.example.com'
+      present_route_stages: {
+        'channel-stable-1': {'<application_name>': 'S'},
+        'foo-channel-stable-1': {'foo': 'E'},
+        'fb1-channel-stable-1': {'foo': 'E'},
+        'fc1-channel-stable-1': {'foo': 'E'},
+      }
+      route_hijack_list: {'<application_name>': 'C', 'foobar': 'E'}
+      default_hijack_mode: {'overall': 'E', 'fa1': 'E', 'fb1': 'C', 'fc1': 'E'}
+      expected_hijack_mode: 'S'
+    - <<: *use_alta_route_config
+      system_ezone: 'fa1'
+    - <<: *use_alta_route_config
+      system_ezone: 'fb1'
+    - <<: *use_alta_route_config
+      system_ezone: 'fc1'
+    - <<: *use_altb_route_config
+      system_ezone: 'fa1'
+    - <<: *use_altb_route_config
+      system_ezone: 'fb1'
+    - <<: *use_altb_route_config
+      system_ezone: 'fc1'
+    - <<: *use_altc_route_config
+      system_ezone: 'fa1'
+    - <<: *use_altc_route_config
+      system_ezone: 'fb1'
+    - <<: *use_altc_route_config
+      system_ezone: 'fc1'
+    - <<: *use_altb_route_config
+      system_ezone: 'fb1'
+      request_domain: 'unknown233.example.com'
+      present_route_stages: {
+        'fb1-channel-stable-1': {'<application_name>': 'C'},
+      }
+      route_hijack_list: {'<application_name>': 'S', 'foobar': 'S'}
+      default_hijack_mode: {'overall': 'S', 'fa1': 'S', 'fb1': 'S', 'fc1': 'S'}
+      expected_hijack_mode: 'C'
+    - <<: *use_altb_route_config
+      system_ezone: 'fb1'
+      request_domain: 'unknown233.example.com'
+      present_route_stages: {
+        'fb1-channel-stable-1': {'foobar': 'S'},
+      }
+      route_hijack_list: {'foobar': 'S', 'foobar': 'S'}
+      default_hijack_mode: {'overall': 'S', 'fa1': 'S', 'fb1': 'C', 'fc1': 'S'}
+      expected_hijack_mode: 'C'
+  dataids:
+    - unknown_domain_unknown_ezone_use_system
+    - unknown_domain_unexpected_ezone_use_system
+    - wellknown_domain_use_ezone-alta->alta=>alta
+    - wellknown_domain_use_ezone-alta->altb=>alta
+    - wellknown_domain_use_ezone-alta->altc=>alta
+    - wellknown_domain_use_ezone-altb->alta=>altb
+    - wellknown_domain_use_ezone-altb->altb=>altb
+    - wellknown_domain_use_ezone-altb->altc=>altb
+    - wellknown_domain_use_ezone-altc->alta=>altc
+    - wellknown_domain_use_ezone-altc->altb=>altc
+    - wellknown_domain_use_ezone-altc->altc=>altc
+    - wellknown_domain_use_server_ezone_unknown->altb=>altb
+    - wellknown_domain_use_current_unknown->altb=>altb
+
+
+c_use_alta_route_config: &c_use_alta_route_config
+  ezone_list: ['fa1', 'fb1', 'fc1']
+  system_ezone: 'fa1'
+  from_cluster_name: 'fa1-channel-stable-3'
+  present_route_stages: {
+    'channel-stable-1': {'<application_name>': 'E'},
+    'foo-channel-stable-1': {'foo': 'D'},
+    'fc1-channel-stable-1': {'foo': 'D'},
+  }
+  route_hijack_list: {'<application_name>': 'S', 'foobar': 'S'}
+  default_hijack_mode: {'overall': 'S', 'fa1': 'S', 'fb1': 'C', 'fc1': 'S'}
+  expected_hijack_mode: 'E'
+
+c_use_altb_route_config: &c_use_altb_route_config
+  ezone_list: ['fa1', 'fb1', 'fc1']
+  system_ezone: 'fa1'
+  from_cluster_name: 'fb1-channel-stable-4'
+  present_route_stages: {
+    'fb1-channel-stable-1': {'<application_name>': 'E'},
+    'foo-channel-stable-1': {'foo': 'D'},
+    'fc1-channel-stable-1': {'foo': 'D'},
+  }
+  route_hijack_list: {'<application_name>': 'S', 'foobar': 'S'}
+  default_hijack_mode: {'overall': 'S', 'fa1': 'S', 'fb1': 'C', 'fc1': 'S'}
+  expected_hijack_mode: 'E'
+
+c_use_altc_route_config: &c_use_altc_route_config
+  ezone_list: ['fa1', 'fb1', 'fc1']
+  system_ezone: 'fa1'
+  from_cluster_name: 'fc1-channel-stable-5'
+  present_route_stages: {
+    'fc1-channel-stable-1': {'<application_name>': 'E'},
+    'foo-channel-stable-1': {'foo': 'D'},
+  }
+  route_hijack_list: {'<application_name>': 'S', 'foobar': 'S'}
+  default_hijack_mode: {'overall': 'S', 'fa1': 'S', 'fb1': 'C', 'fc1': 'S'}
+  expected_hijack_mode: 'E'
+
+test_route_hijack_mode_get_ezone_via_cluster:
+  args: ezone_list,system_ezone,from_cluster_name,route_hijack_list,present_route_stages,default_hijack_mode,expected_hijack_mode
+  data:
+    - ezone_list: ['fa1', 'fb1', 'fc1']
+      system_ezone: 'fa1'
+      from_cluster_name: 'xy-foobar'
+      present_route_stages: {
+        'channel-stable-1': {'<application_name>': 'S'},
+        'foo-channel-stable-1': {'foo': 'E'},
+        'fb1-channel-stable-1': {'foo': 'E'},
+        'fc1-channel-stable-1': {'foo': 'E'},
+      }
+      route_hijack_list: {'<application_name>': 'C', 'foobar': 'E'}
+      default_hijack_mode: {'overall': 'E', 'fa1': 'E', 'fb1': 'C', 'fc1': 'E'}
+      expected_hijack_mode: 'S'
+    - ezone_list: ['fa1', 'fb1', 'fc1', 'fd1']
+      system_ezone: 'fb1'
+      from_cluster_name: 'fd1-foobar'
+      present_route_stages: {
+        'channel-stable-1': {'<application_name>': 'E'},
+        'foo-channel-stable-1': {'foo': 'E'},
+        'fb1-channel-stable-1': {'foo': 'E'},
+        'fc1-channel-stable-1': {'foo': 'E'},
+      }
+      route_hijack_list: {'<application_name>': 'S', 'foobar': 'E'}
+      default_hijack_mode: {
+        'overall': 'E', 'fa1': 'E', 'fb1': 'C', 'fc1': 'E', 'fd1': 'E'}
+      expected_hijack_mode: 'S'
+    - <<: *c_use_alta_route_config
+      system_ezone: 'fa1'
+    - <<: *c_use_alta_route_config
+      system_ezone: 'fb1'
+    - <<: *c_use_alta_route_config
+      system_ezone: 'fc1'
+    - <<: *c_use_altb_route_config
+      system_ezone: 'fa1'
+    - <<: *c_use_altb_route_config
+      system_ezone: 'fb1'
+    - <<: *c_use_altb_route_config
+      system_ezone: 'fc1'
+    - <<: *c_use_altc_route_config
+      system_ezone: 'fa1'
+    - <<: *c_use_altc_route_config
+      system_ezone: 'fb1'
+    - <<: *c_use_altc_route_config
+      system_ezone: 'fc1'
+    - <<: *c_use_altb_route_config
+      system_ezone: 'fb1'
+      from_cluster_name: null
+      present_route_stages: {
+        'fb1-channel-stable-1': {'<application_name>': 'C'},
+      }
+      route_hijack_list: {'<application_name>': 'S', 'foobar': 'S'}
+      default_hijack_mode: {'overall': 'S', 'fa1': 'S', 'fb1': 'S', 'fc1': 'S'}
+      expected_hijack_mode: 'C'
+    - <<: *c_use_altb_route_config
+      system_ezone: 'fb1'
+      from_cluster_name: null
+      present_route_stages: {
+        'fb1-channel-stable-1': {'foobar': 'S'},
+      }
+      route_hijack_list: {'foobar': 'S', 'foobar': 'S'}
+      default_hijack_mode: {'overall': 'S', 'fa1': 'S', 'fb1': 'C', 'fc1': 'S'}
+      expected_hijack_mode: 'C'
+  dataids:
+    - has_cluster_unknown_ezone_use_overall-alta
+    - has_cluster_unexpected_ezone_use_current
+    - has_cluster_use_ezone-alta->alta=>alta
+    - has_cluster_use_ezone-alta->altb=>alta
+    - has_cluster_use_ezone-alta->altc=>alta
+    - has_cluster_use_ezone-altb->alta=>altb
+    - has_cluster_use_ezone-altb->altb=>altb
+    - has_cluster_use_ezone-altb->altc=>altb
+    - has_cluster_use_ezone-altc->alta=>altc
+    - has_cluster_use_ezone-altc->altb=>altc
+    - has_cluster_use_ezone-altc->altc=>altc
+    - no_cluster_use_server_ezone_unknown->altb=>altb
+    - no_cluster_use_current_unknown->altb=>altb

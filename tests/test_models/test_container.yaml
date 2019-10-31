@@ -1,0 +1,163 @@
+---
+
+test_management_lookup:
+  args: present_path,result,warning
+  data:
+    - present_path:
+        - '/huskar/container/%s'
+      result: []
+      warning: null
+    - present_path: []
+      result: []
+      warning: null
+    - present_path:
+        - '/huskar/container/%s/base.foo$alta1-channel-stable-1'
+        - '/huskar/container/%s/base.foo$altb1-channel-stable-1'
+        - '/huskar/container/%s/base.bar$alta1-channel-stable-2'
+      result:
+        - ['base.bar', 'alta1-channel-stable-2']
+        - ['base.foo', 'alta1-channel-stable-1']
+        - ['base.foo', 'altb1-channel-stable-1']
+      warning: null
+    - present_path:
+        - '/huskar/container/%s/base.foo$alta1-channel-stable-1'
+        - '/huskar/container/%s/base.foo$altb1-channel-stable-1'
+        - '/huskar/container/%s/base.bar$alta1-channel-stable-2'
+        - '/huskar/container/%s/base.bar'
+      result:
+        - ['base.bar', 'alta1-channel-stable-2']
+        - ['base.foo', 'alta1-channel-stable-1']
+        - ['base.foo', 'altb1-channel-stable-1']
+      warning:
+        - 'Malformed container %r in %s'
+        - 'base.bar'
+        - '{container_id}'
+
+
+test_management_destroy:
+  args: present_path,vanished_path,has_metrics
+  data:
+    - present_path:
+        - '/huskar/container/%s'
+      vanished_path:
+        - '/huskar/container/%s'
+      has_metrics: true
+    - present_path: []
+      vanished_path:
+        - '/huskar/container/%s'
+      has_metrics: false
+
+
+test_management_destroy_failed:
+  args: present_path,expected_path
+  data:
+    - present_path:
+        - '/huskar/container/%s/base.foo$alta1-channel-stable-1'
+      expected_path:
+        - '/huskar/container/%s'
+
+
+test_management_register_to:
+  args: present_path,call_args,expected_children
+  data:
+    - present_path: []
+      call_args:
+        - application: base.foo
+          cluster: alpha_stable
+        - application: base.foo
+          cluster: alpha_dev
+      expected_children:
+        - path: '/huskar/container/%s'
+          children:
+            - 'base.foo$alpha_stable'
+            - 'base.foo$alpha_dev'
+    - present_path: []
+      call_args:
+        - application: base.foo
+          cluster: alpha_stable
+        - application: base.bar
+          cluster: alpha_stable
+      expected_children:
+        - path: '/huskar/container/%s'
+          children:
+            - 'base.foo$alpha_stable'
+            - 'base.bar$alpha_stable'
+    - present_path:
+        - '/huskar/container/%s/base.foo$alpha_stable'
+      call_args:
+        - application: base.foo
+          cluster: alpha_stable
+        - application: base.bar
+          cluster: alpha_stable
+      expected_children:
+        - path: '/huskar/container/%s'
+          children:
+            - 'base.foo$alpha_stable'
+            - 'base.bar$alpha_stable'
+
+
+test_management_register_to_failed:
+  args: call_arg,error_pattern
+  data:
+    - call_arg:
+        application: 'base.foo'
+        cluster: ''
+      error_pattern: '^Illegal cluster name\('
+    - call_arg:
+        application: 'base.foo'
+        cluster: 'stable$'
+      error_pattern: '^Illegal cluster name\('
+    - call_arg:
+        application: ''
+        cluster: 'stable'
+      error_pattern: '^Illegal application name\('
+    - call_arg:
+        application: 'base.foo$'
+        cluster: 'stable'
+      error_pattern: '^Illegal application name\('
+    - call_arg:
+        application: 'base.foo'
+        cluster: 'stable/hero'
+      error_pattern: '^Illegal characters in path\('
+    - call_arg:
+        application: 'base.foo/hero'
+        cluster: 'stable'
+      error_pattern: '^Illegal characters in path\('
+
+
+test_management_deregister_from:
+  args: present_path,call_args,expected_children
+  data:
+    - present_path:
+        - '/huskar/container/%s'
+      call_args:
+        - application: base.foo
+          cluster: alpha_stable
+      expected_children:
+        - path: '/huskar/container/%s'
+          children: []
+    - present_path:
+        - '/huskar/container/%s/base.foo$alpha_stable'
+        - '/huskar/container/%s/base.foo$alpha_dev'
+        - '/huskar/container/%s/base.bar$alpha_stable'
+      call_args:
+        - application: base.foo
+          cluster: alpha_stable
+        - application: base.baz
+          cluster: alpha_stable
+      expected_children:
+        - path: '/huskar/container/%s'
+          children:
+            - 'base.foo$alpha_dev'
+            - 'base.bar$alpha_stable'
+    - present_path:
+        - '/huskar/container/%s/base.foo$alpha_stable'
+        - '/huskar/container/%s/base.foo$alpha_dev'
+      call_args:
+        - application: base.foo
+          cluster: alpha_stable
+        - application: base.foo
+          cluster: alpha_dev
+      expected_children:
+        - path: '/huskar/container/%s'
+          children: []

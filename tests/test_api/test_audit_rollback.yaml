@@ -1,0 +1,26 @@
+---
+
+test_rollback_infra_config_change:
+  args: _action_type,_scope_type,_scope_name,_old_value,_new_value,_expected_value,_expected_action_type
+  data:
+    - _action_type: 'UPDATE_INFRA_CONFIG'
+      _scope_type: 'idcs'
+      _scope_name: 'alta1'
+      _old_value: null
+      _new_value: {'url': 'sam+redis://redis.foobar/overall.alta'}
+      _expected_action_type: 'DELETE_INFRA_CONFIG'
+      _expected_value: null
+    - _action_type: 'UPDATE_INFRA_CONFIG'
+      _scope_type: 'idcs'
+      _scope_name: 'altb1'
+      _old_value: {'url': 'sam+redis://redis.foobar/overall.altb'}
+      _new_value: {'url': 'sam+redis://redis.foobar/overall.altb', 'connect_timeout': 10}
+      _expected_action_type: 'UPDATE_INFRA_CONFIG'
+      _expected_value: {'url': 'sam+redis://redis.foobar/overall.altb'}
+    - _action_type: 'DELETE_INFRA_CONFIG'
+      _scope_type: 'idcs'
+      _scope_name: 'altb1'
+      _old_value: {'url': 'sam+redis://redis.foobar/overall.altb'}
+      _new_value: null,
+      _expected_action_type: 'UPDATE_INFRA_CONFIG'
+      _expected_value: {'url': 'sam+redis://redis.foobar/overall.altb'}

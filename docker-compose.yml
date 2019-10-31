@@ -1,0 +1,47 @@
+version: '2'
+services:
+  wsgi:
+    build:
+      context: .
+    command: gunicorn -c config/gunicorn_config.py huskar_api.wsgi:app
+    cap_add:
+      - ALL
+    ports:
+      - "5000"
+    depends_on:
+      - mysql
+      - redis
+      - zookeeper
+    volumes:
+      - ".:/srv/huskar_api"
+      - "/root/.cache"
+    links:
+      - "mysql:mysql"
+      - "redis:redis"
+      - "zookeeper:zookeeper"
+    environment:
+      PYTHONUNBUFFERED: "1"
+      PYTHONPATH: "/srv/huskar_api"
+      GEVENT_RESOLVER: "block"
+      DATABASE_DEFAULT_URL: "mysql+pymysql://root@mysql:3306/huskar_api?charset=utf8mb4"
+      HUSKAR_API_DB_URL: "mysql+pymysql://root@mysql:3306/huskar_api?charset=utf8mb4"
+      REDIS_DEFAULT_URL: "redis://redis:6379"
+      HUSKAR_API_REDIS_URL: "redis://redis:6379"
+      HUSKAR_API_ZK_SERVERS: "zookeeper:2181"
+    env_file:
+      - .env
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_DATABASE=huskar_api
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
+    ports:
+      - "3306"
+  redis:
+    image: redis:3.0.7
+    ports:
+      - "6379"
+  zookeeper:
+    image: zookeeper:3.4.14
+    ports:
+      - "2181"

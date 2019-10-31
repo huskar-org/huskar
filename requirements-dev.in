@@ -1,0 +1,18 @@
+-r requirements.txt
+
+sphinx>=1.5
+sphinx-rtd-theme>=0.1
+sphinx-autobuild>=0.6
+sphinxcontrib-httpdomain>=1.7.0,<1.8
+
+pytest
+pytest-flask
+pytest-cov
+pytest-mock
+pytest-faker
+pytest-xpara[yaml]
+flake8
+freezegun
+requests-mock
+
+pylint

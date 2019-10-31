@@ -1,0 +1,550 @@
+---
+
+test_add_user:
+  args: presented_data,input_data,expected_data
+  data:
+    - presented_data: []
+      input_data:
+        username: 'test01'
+        password: 'test01'
+        email: 'test01@foo.dev'
+      expected_data:
+        username: 'test01'
+        password: '35dca21756762543ce3629f18a557868b07b40daee8c93225d69ac79'
+        last_login: null
+        is_active: 1
+        email: 'test01@foo.dev'
+        huskar_admin: 0
+        is_app: 0
+    - presented_data:
+        - username: 'test01'
+          password: 'random'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      input_data:
+        username: 'test02'
+        password: 'test01'
+        email: 'test02@foo.dev'
+      expected_data:
+        username: 'test02'
+        password: '35dca21756762543ce3629f18a557868b07b40daee8c93225d69ac79'
+        last_login: null
+        is_active: 1
+        email: 'test02@foo.dev'
+        huskar_admin: 0
+        is_app: 0
+    - presented_data: []
+      input_data:
+        username: 'test03'
+        email: 'test03@foo.dev'
+      expected_data:
+        username: 'test03'
+        # password is random
+        last_login: null
+        is_active: 1
+        email: 'test03@foo.dev'
+        huskar_admin: 0
+        is_app: 0
+
+test_add_user_failed:
+  args: presented_data,input_token,input_data,expected_code,expected_data
+  data:
+    - presented_data:
+        - username: 'test01'
+          password: 'random'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      input_data:
+        username: 'test01'
+        password: 'test01'
+        email: 'test01-1@foo.dev'
+      expected_code: 400
+      expected_data:
+        status: 'BadRequest'
+        message: 'test01 is used username'
+        data: null
+    - presented_data:
+        - username: 'test02'
+          password: 'random'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      input_data:
+        username: 'test02'
+        password: 'test02'
+        email: 'test02-1@foo.dev'
+      expected_code: 400
+      expected_data:
+        status: 'BadRequest'
+        message: 'test02 is used username'
+        data: null
+    - presented_data: []
+      input_token: 'random_token'
+      input_data:
+        username: 'test03'
+        password: 'random'
+        email: 'test03@foo.dev'
+      expected_code: 401
+      expected_data:
+        status: 'Unauthorized'
+        message: 'The token is missing, invalid or expired.'
+        data: null
+    - presented_data: []
+      input_token: '%test_application_token%'
+      input_data:
+        username: 'test04'
+        password: 'random'
+        email: 'test04@foo.dev'
+      expected_code: 400
+      expected_data:
+        status: 'NoAuthError'
+        message: 'only admin can add users'
+        data: null
+
+test_get_user:
+  args: presented_data,input_data,expected_data
+  data:
+    - presented_data:
+        - username: 'test01'
+          password: 'random'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      input_data:
+        username: 'test01'
+      expected_data:
+        username: 'test01'
+        email: 'test01@foo.dev'
+        created_at: '1993-05-03T00:00:00+00:00'
+        is_admin: false
+        is_active: 1
+        last_login: '1993-05-03T12:00:00+00:00'
+
+test_get_user_list:
+  args: presented_data,expected_data
+  data:
+    - presented_data:
+        - username: 'test01'
+          password: 'random'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      expected_data:
+        - username: 'test01'
+          email: 'test01@foo.dev'
+          created_at: '1993-05-03T00:00:00+00:00'
+          is_admin: false
+          is_active: 1
+          last_login: '1993-05-03T12:00:00+00:00'
+    - presented_data:
+        - username: 'test01'
+          password: 'random'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+        - username: 'test02'
+          password: 'random'
+          created_at: '1993-06-03 00:00:00'
+          last_login: null
+          is_active: 1
+          email: 'test02@foo.dev'
+          huskar_admin: 1
+          is_app: 0
+        - username: 'test03'
+          password: 'random'
+          created_at: '1993-06-03 00:00:00'
+          last_login: null
+          is_active: 0
+          email: 'test03@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      expected_data:
+        - username: 'test01'
+          email: 'test01@foo.dev'
+          created_at: '1993-05-03T00:00:00+00:00'
+          is_admin: false
+          is_active: 1
+          last_login: '1993-05-03T12:00:00+00:00'
+        - username: 'test02'
+          email: 'test02@foo.dev'
+          created_at: '1993-06-03T00:00:00+00:00'
+          is_admin: true
+          is_active: 1
+          last_login: null
+    - presented_data:
+        - username: 'test01'
+          password: 'random'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+        - username: 'test02'
+          password: 'random'
+          created_at: '1993-06-03 00:00:00'
+          last_login: null
+          is_active: 1
+          email: 'test02@foo.dev'
+          huskar_admin: 1
+          is_app: 0
+      expected_data:
+        - username: 'test01'
+          email: 'test01@foo.dev'
+          created_at: '1993-05-03T00:00:00+00:00'
+          is_admin: false
+          is_active: 1
+          last_login: '1993-05-03T12:00:00+00:00'
+        - username: 'test02'
+          email: 'test02@foo.dev'
+          created_at: '1993-06-03T00:00:00+00:00'
+          is_admin: true
+          is_active: 1
+          last_login: null
+
+test_delete_user:
+  args: presented_data,input_data,expected_data
+  data:
+    - presented_data:
+        - username: 'test01'
+          password: 'random'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      input_data:
+        username: 'test01'
+      expected_data: []
+    - presented_data:
+        - username: 'test01'
+          password: 'random'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+        - username: 'test02'
+          password: 'random'
+          created_at: '1993-06-03 00:00:00'
+          last_login: '1993-06-03 12:00:00'
+          is_active: 1
+          email: 'test02@foo.dev'
+          huskar_admin: 1
+          is_app: 0
+      input_data:
+        username: 'test02'
+      expected_data:
+        - username: 'test01'
+          password: 'random'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          is_admin: 0
+          is_app: 0
+
+test_delete_user_failed:
+  args: presented_data,input_token,input_data,expected_code,expected_data
+  data:
+    - presented_data: []
+      input_data:
+        username: 'test01'
+      expected_code: 404
+      expected_data:
+        status: 'NotFound'
+        message: 'user test01 not found'
+        data: null
+    - presented_data:
+        - username: 'test02'
+          password: 'random'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test02@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      input_data:
+        username: 'test02-1'
+      expected_code: 404
+      expected_data:
+        status: 'NotFound'
+        message: 'user test02-1 not found'
+        data: null
+    - presented_data:
+        - username: 'test03'
+          password: 'random'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test03@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      input_token: 'random_token'
+      input_data:
+        username: 'test03'
+      expected_code: 401
+      expected_data:
+        status: 'Unauthorized'
+        message: 'The token is missing, invalid or expired.'
+        data: null
+    - presented_data:
+        - username: 'test04'
+          password: 'random'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test04@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      input_token: '%test_application_token%'
+      input_data:
+        username: 'test04'
+      expected_code: 400
+      expected_data:
+        status: 'NoAuthError'
+        message: 'only admin can delete users'
+        data: null
+
+test_change_password:
+  args: presented_data,input_token,input_data,expected_data,expected_password
+  data:
+    - presented_data:
+        - username: 'test01'
+          password: '35dca21756762543ce3629f18a557868b07b40daee8c93225d69ac79'  # 'test01'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      input_token: 'eyJhbGciOiJIUzI1NiIsImV4cCI6SW5maW5pdHksImlhdCI6MTQ2ODU3OTgwNn0.eyJ1c2VybmFtZSI6InRlc3QwMSJ9.ToeNhneW3dJfnvRBKU-GOF8q24ZqyMn7eSbJSQyLePA'  # 'test01'
+      input_data:
+        username: 'test01'
+        old_password: 'test01'
+        new_password: 'test02'
+      expected_data:
+        status: 'SUCCESS'
+        message: ''
+        data: null
+      expected_password: '52565801877fd60671bfded266819eebe22fac3e95c93278c47cb504'  # 'test02'
+  dataids:
+    - 'test01'
+
+test_change_password_failed:
+  args: presented_data,input_token,input_data,expected_code,expected_data
+  data:
+    - presented_data:
+        - username: 'test01'
+          password: '35dca21756762543ce3629f18a557868b07b40daee8c93225d69ac79'  # 'test01'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      input_token: 'eyJhbGciOiJIUzI1NiIsImV4cCI6SW5maW5pdHksImlhdCI6MTQ2ODU3OTgwNn0.eyJ1c2VybmFtZSI6InRlc3QwMSJ9.ToeNhneW3dJfnvRBKU-GOF8q24ZqyMn7eSbJSQyLePA'  # 'test01'
+      input_data:
+        username: 'test01'
+        old_password: 'test01-is-not-correct'
+        new_password: 'test02'
+      expected_code: 403
+      expected_data:
+        status: 'Forbidden'
+        message: 'password is not correct'
+        data: null
+    - presented_data:
+        - username: 'test01'
+          password: '35dca21756762543ce3629f18a557868b07b40daee8c93225d69ac79'  # 'test01'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+        - username: 'test02'
+          password: '52565801877fd60671bfded266819eebe22fac3e95c93278c47cb504'  # 'test02'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test02@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      input_token: 'eyJhbGciOiJIUzI1NiIsImV4cCI6SW5maW5pdHksImlhdCI6MTQ2ODU3OTgwNn0.eyJ1c2VybmFtZSI6InRlc3QwMSJ9.ToeNhneW3dJfnvRBKU-GOF8q24ZqyMn7eSbJSQyLePA'  # 'test01'
+      input_data:
+        username: 'test02'  # the 'test01' is modifying the password of 'test02'
+        old_password: 'test02'
+        new_password: 'test03'
+      expected_code: 403
+      expected_data:
+        status: 'Forbidden'
+        message: 'test01 is not permitted to modify test02.'
+        data: null
+  dataids:
+    - 'test01'
+    - 'test02'
+
+test_change_email:
+  args: presented_data,input_token,input_data,expected_data,expected_password,expected_email
+  data:
+    - presented_data:
+        - username: 'test01'
+          password: '35dca21756762543ce3629f18a557868b07b40daee8c93225d69ac79'  # 'test01'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test01@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      input_token: 'eyJhbGciOiJIUzI1NiIsImV4cCI6SW5maW5pdHksImlhdCI6MTQ2ODU3OTgwNn0.eyJ1c2VybmFtZSI6InRlc3QwMSJ9.ToeNhneW3dJfnvRBKU-GOF8q24ZqyMn7eSbJSQyLePA'  # 'test01'
+      input_data:
+        username: 'test01'
+        old_password: 'test01'
+        email: 'test01-1@foo.dev'
+      expected_data:
+        status: 'SUCCESS'
+        message: ''
+        data: null
+      expected_password: '35dca21756762543ce3629f18a557868b07b40daee8c93225d69ac79'  # 'test01'
+      expected_email: 'test01-1@foo.dev'
+    - presented_data:
+        - username: 'test02'
+          password: '35dca21756762543ce3629f18a557868b07b40daee8c93225d69ac79'  # 'test01'
+          created_at: '1993-05-03 00:00:00'
+          last_login: '1993-05-03 12:00:00'
+          is_active: 1
+          email: 'test02@foo.dev'
+          huskar_admin: 0
+          is_app: 0
+      input_token: 'eyJhbGciOiJIUzI1NiIsImV4cCI6SW5maW5pdHksImlhdCI6MTQ2ODU4MjAwN30.eyJ1c2VybmFtZSI6InRlc3QwMiJ9.bQxicOqz9EWq3ovBDZBUVhyMqJY40H0vboulZFNUMuw'  # 'test02'
+      input_data:
+        username: 'test02'
+        old_password: 'test01'
+        new_password: 'test02'
+        email: 'test02-1@foo.dev'
+      expected_data:
+        status: 'SUCCESS'
+        message: ''
+        data: null
+      expected_password: '52565801877fd60671bfded266819eebe22fac3e95c93278c47cb504'  # 'test02'
+      expected_email: 'test02-1@foo.dev'
+  dataids:
+    - 'test01'
+    - 'test02'
+
+test_password_reset:
+  args: presented_data,input_data,generated_uuid,expected_request_error,expected_status_code,expected_response,expected_password
+  data:
+    - presented_data:
+        username: 'test01'
+        password: '35dca21756762543ce3629f18a557868b07b40daee8c93225d69ac79'  # 'test01'
+        created_at: '1993-05-03 00:00:00'
+        last_login: '1993-05-03 12:00:00'
+        is_active: 1
+        email: 'test01@foo.dev'
+        huskar_admin: 0
+        is_app: 0
+      input_data:
+        username: 'test01'
+        password: 'test02'
+        token: '2941dabbedd54c0ab04446ff3260c21f'
+      generated_uuid: '2941dabbedd54c0ab04446ff3260c21f'
+      expected_request_error: null
+      expected_status_code: 200
+      expected_response:
+        status: 'SUCCESS'
+        message: ''
+        data: null
+      expected_password: '52565801877fd60671bfded266819eebe22fac3e95c93278c47cb504'  # 'test02'
+    - presented_data:
+        username: 'test02'
+        password: '35dca21756762543ce3629f18a557868b07b40daee8c93225d69ac79'  # 'test01'
+        created_at: '1993-05-03 00:00:00'
+        last_login: '1993-05-03 12:00:00'
+        is_active: 1
+        email: 'test02@foo.dev'
+        huskar_admin: 0
+        is_app: 0
+      input_data:
+        username: 'test02'
+        password: 'test02'
+        token: 'b121397a6d494a5fa95aee96011217c3'
+      generated_uuid: '2941dabbedd54c0ab04446ff3260c21f'
+      expected_request_error: null
+      expected_status_code: 403
+      expected_response:
+        status: 'Forbidden'
+        message: 'token is expired'
+        data: null
+      expected_password: '35dca21756762543ce3629f18a557868b07b40daee8c93225d69ac79'  # 'test01'
+    - presented_data:
+        username: 'test03'
+        password: '35dca21756762543ce3629f18a557868b07b40daee8c93225d69ac79'  # 'test01'
+        created_at: '1993-05-03 00:00:00'
+        last_login: '1993-05-03 12:00:00'
+        is_active: 1
+        email: 'test03@foo.dev'
+        huskar_admin: 0
+        is_app: 0
+      input_data:
+        username: 'test01'
+        password: ''
+        token: ''
+      generated_uuid: '2941dabbedd54c0ab04446ff3260c21f'
+      expected_request_error:
+        code: 404
+        status: 'NotFound'
+        message: 'user test01 not found'
+        data: null
+      expected_status_code: null
+      expected_response: null
+      expected_password: null
+    - presented_data:
+        username: 'test04'
+        password: '35dca21756762543ce3629f18a557868b07b40daee8c93225d69ac79'  # 'test01'
+        created_at: '1993-05-03 00:00:00'
+        last_login: '1993-05-03 12:00:00'
+        is_active: 1
+        email: null
+        huskar_admin: 0
+        is_app: 0
+      input_data:
+        username: 'test04'
+        password: ''
+        token: ''
+      generated_uuid: '2941dabbedd54c0ab04446ff3260c21f'
+      expected_request_error:
+        code: 403
+        status: 'Forbidden'
+        message: 'user test04 does not have email'
+        data: null
+      expected_status_code: null
+      expected_response: null
+      expected_password: null
+  dataids:
+    - 'test01_ok'
+    - 'test02_token_incorrect'
+    - 'test03_user_not_found'
+    - 'test04_email_not_found'
