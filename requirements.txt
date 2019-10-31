@@ -19,7 +19,7 @@ dogpile.core==0.4.1       # via dogpile.cache
 enum34==1.1.6
 flask-babel==0.11.1
 flask-script==2.0.5
-flask==0.12.4
+flask==1.0
 https://github.com/huskar-org/gevent/raw/1.0.2b1/dist/gevent-1.0.2b1.tar.gz#egg=gevent
 greenlet==0.4.10
 gunicorn==19.3.0
@@ -27,7 +27,7 @@ huskar-sdk-v2[bootstrap]==0.18.0
 idna==2.6                 # via requests
 ipaddress==1.0.17
 itsdangerous==0.24        # via flask
-jinja2==2.7.3             # via flask, flask-babel
+jinja2==2.10.3            # via flask, flask-babel
 https://github.com/huskar-org/kazoo/archive/2.0.post5.zip#egg=kazoo
 mako==1.0.4               # via alembic
 markupsafe==0.23          # via jinja2, mako
@@ -51,4 +51,4 @@ simplejson==3.7.3         # via huskar-sdk-v2
 six==1.10.0               # via more-itertools, mysql-replication, python-dateutil
 sqlalchemy==0.9.3
 urllib3==1.24.1           # via requests
-werkzeug==0.11.11         # via flask
+werkzeug==0.16.0          # via flask
