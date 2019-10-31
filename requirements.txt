@@ -22,7 +22,7 @@ flask-script==2.0.5
 flask==0.12.4
 https://github.com/huskar-org/gevent/raw/1.0.2b1/dist/gevent-1.0.2b1.tar.gz#egg=gevent
 greenlet==0.4.10
-gunicorn==19.3.0
+gunicorn==19.5.0
 huskar-sdk-v2[bootstrap]==0.18.0
 idna==2.6                 # via requests
 ipaddress==1.0.17
