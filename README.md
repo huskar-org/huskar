@@ -1,7 +1,10 @@
 Huskar API
 ==========
 
-HTTP API of Huskar: http://example.com/huskar_api/
+[![CircleCI](https://circleci.com/gh/huskar-org/huskar/tree/master.svg?style=svg)](https://circleci.com/gh/huskar-org/huskar/tree/master)
+[![codecov](https://codecov.io/gh/huskar-org/huskar/branch/master/graph/badge.svg)](https://codecov.io/gh/huskar-org/huskar)
+
+HTTP API of Huskar.
 
 How to start
 ------------
