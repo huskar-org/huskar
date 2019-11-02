@@ -47,7 +47,7 @@ lazy-object-proxy==1.2.2  # via astroid
 livereload==2.4.1         # via sphinx-autobuild
 mako==1.0.4
 markupsafe==0.23
-marshmallow==2.9.1
+marshmallow==2.15.1
 mccabe==0.5.2             # via flake8, pylint
 meepo2==0.2.5
 mock==2.0.0               # via pytest-mock
