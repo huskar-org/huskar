@@ -12,7 +12,7 @@ raven>=5.2,<6.0
 
 python-decouple>=3.0,<3.1
 python-dateutil>=2.6,<2.7
-marshmallow>=2.9,<2.10
+marshmallow>=2.9,<2.16
 ipaddress>=1.0,<1.1
 enum34>=1.1.6,<1.2
 more-itertools>=3.2,<4.0
