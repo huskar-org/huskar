@@ -6,6 +6,13 @@ Huskar API
 
 HTTP API of Huskar.
 
+Demo
+------
+
+* 面板: https://demo.huskar.org (用户名: `huskar` 密码: `test`)
+* API: https://api.demo.huskar.org
+* 备注: 每天凌晨三点自动重置数据。
+
 How to start
 ------------
 
