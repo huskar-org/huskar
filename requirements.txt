@@ -51,4 +51,4 @@ simplejson==3.7.3         # via huskar-sdk-v2
 six==1.10.0               # via more-itertools, mysql-replication, python-dateutil
 sqlalchemy==0.9.3
 urllib3==1.24.1           # via requests
-werkzeug==0.11.11         # via flask
+werkzeug==0.15.3          # via flask
