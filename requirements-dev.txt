@@ -29,7 +29,7 @@ faker==0.7.7              # via pytest-faker
 flake8==3.0.4
 flask-babel==0.11.1
 flask-script==2.0.5
-flask==0.12.4
+flask==1.0
 freezegun==0.3.8
 funcsigs==1.0.2           # via mock
 https://github.com/huskar-org/gevent/raw/1.0.2b1/dist/gevent-1.0.2b1.tar.gz#egg=gevent
@@ -41,7 +41,7 @@ imagesize==0.7.1          # via sphinx
 ipaddress==1.0.17
 isort==4.2.5              # via pylint
 itsdangerous==0.24
-jinja2==2.7.3
+jinja2==2.10.3
 https://github.com/huskar-org/kazoo/archive/2.0.post5.zip#egg=kazoo
 lazy-object-proxy==1.2.2  # via astroid
 livereload==2.4.1         # via sphinx-autobuild
@@ -93,5 +93,5 @@ sqlalchemy==0.9.3
 tornado==4.4.1            # via livereload, sphinx-autobuild
 urllib3==1.24.1
 watchdog==0.8.3           # via sphinx-autobuild
-werkzeug==0.11.11
+werkzeug==0.16.0
 wrapt==1.10.8             # via astroid

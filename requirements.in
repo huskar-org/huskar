@@ -1,4 +1,4 @@
-flask==0.12.4
+flask==1.0
 flask-script==2.0.5
 flask-babel==0.11.1
 babel==2.3.4
