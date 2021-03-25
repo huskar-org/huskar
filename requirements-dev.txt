@@ -4,94 +4,296 @@
 #
 #    pip-compile --no-emit-trusted-host --no-index --output-file=requirements-dev.txt requirements-dev.in
 #
-alabaster==0.7.9          # via sphinx
+alabaster==0.7.9
+    # via sphinx
 alembic==0.7.7
-argh==0.26.2              # via sphinx-autobuild, watchdog
-astroid==1.4.9            # via pylint
+    # via -r requirements.txt
+argh==0.26.2
+    # via
+    #   sphinx-autobuild
+    #   watchdog
+astroid==1.4.9
+    # via pylint
 atomicfile==1.0
+    # via
+    #   -r requirements.txt
+    #   huskar-sdk-v2
 babel==2.3.4
-backports-abc==0.5        # via tornado
-backports.functools-lru-cache==1.3  # via pylint
+    # via
+    #   -r requirements.txt
+    #   flask-babel
+    #   sphinx
+backports-abc==0.5
+    # via tornado
+backports.functools-lru-cache==1.3
+    # via pylint
 blinker==1.3
+    # via
+    #   -r requirements.txt
+    #   huskar-sdk-v2
+    #   meepo2
 certifi==2018.8.24
+    # via
+    #   -r requirements.txt
+    #   requests
+    #   tornado
 cffi==1.11.2
+    # via
+    #   -r requirements.txt
+    #   orphanage
 chardet==3.0.4
+    # via
+    #   -r requirements.txt
+    #   requests
 click==5.1
-configparser==3.5.0       # via flake8, pylint
-coverage==4.2             # via pytest-cov
+    # via
+    #   -r requirements.txt
+    #   flask
+configparser==3.5.0
+    # via
+    #   flake8
+    #   pylint
+coverage==4.2
+    # via pytest-cov
 decorator==3.4.0
+    # via -r requirements.txt
 https://github.com/huskar-org/doctor/archive/v0.2.1.zip#egg=doctor
-docutils==0.12            # via sphinx
+    # via -r requirements.txt
+docutils==0.12
+    # via sphinx
 dogpile.cache==0.5.4
+    # via -r requirements.txt
 dogpile.core==0.4.1
+    # via
+    #   -r requirements.txt
+    #   dogpile.cache
 enum34==1.1.6
-faker==0.7.7              # via pytest-faker
+    # via
+    #   -r requirements.txt
+    #   flake8
+faker==0.7.7
+    # via pytest-faker
 flake8==3.0.4
+    # via -r requirements-dev.in
 flask-babel==0.11.1
+    # via -r requirements.txt
 flask-script==2.0.5
+    # via -r requirements.txt
 flask==0.12.4
+    # via
+    #   -r requirements.txt
+    #   flask-babel
+    #   flask-script
+    #   pytest-flask
 freezegun==0.3.8
-funcsigs==1.0.2           # via mock
+    # via -r requirements-dev.in
+funcsigs==1.0.2
+    # via mock
 https://github.com/huskar-org/gevent/raw/1.0.2b1/dist/gevent-1.0.2b1.tar.gz#egg=gevent
+    # via
+    #   -r requirements.txt
+    #   huskar-sdk-v2
 greenlet==0.4.10
+    # via
+    #   -r requirements.txt
+    #   gevent
 gunicorn==19.3.0
+    # via -r requirements.txt
 huskar-sdk-v2[bootstrap]==0.18.0
+    # via -r requirements.txt
 idna==2.6
-imagesize==0.7.1          # via sphinx
+    # via
+    #   -r requirements.txt
+    #   requests
+imagesize==0.7.1
+    # via sphinx
 ipaddress==1.0.17
-isort==4.2.5              # via pylint
+    # via
+    #   -r requirements.txt
+    #   faker
+isort==4.2.5
+    # via pylint
 itsdangerous==0.24
+    # via
+    #   -r requirements.txt
+    #   flask
 jinja2==2.7.3
+    # via
+    #   -r requirements.txt
+    #   flask
+    #   flask-babel
+    #   sphinx
 https://github.com/huskar-org/kazoo/archive/2.0.post5.zip#egg=kazoo
-lazy-object-proxy==1.2.2  # via astroid
-livereload==2.4.1         # via sphinx-autobuild
+    # via
+    #   -r requirements.txt
+    #   huskar-sdk-v2
+lazy-object-proxy==1.2.2
+    # via astroid
+livereload==2.4.1
+    # via sphinx-autobuild
 mako==1.0.4
+    # via
+    #   -r requirements.txt
+    #   alembic
 markupsafe==0.23
+    # via
+    #   -r requirements.txt
+    #   jinja2
+    #   mako
 marshmallow==2.9.1
-mccabe==0.5.2             # via flake8, pylint
+    # via -r requirements.txt
+mccabe==0.5.2
+    # via
+    #   flake8
+    #   pylint
 meepo2==0.2.5
-mock==2.0.0               # via pytest-mock
+    # via -r requirements.txt
+mock==2.0.0
+    # via pytest-mock
 more-itertools==3.2.0
+    # via -r requirements.txt
 mysql-replication==0.5
+    # via
+    #   -r requirements.txt
+    #   meepo2
 orphanage==0.1.0
-pathtools==0.1.2          # via sphinx-autobuild, watchdog
-pbr==1.10.0               # via mock
-port-for==0.3.1           # via sphinx-autobuild
+    # via -r requirements.txt
+pathtools==0.1.2
+    # via
+    #   sphinx-autobuild
+    #   watchdog
+pbr==1.10.0
+    # via mock
+port-for==0.3.1
+    # via sphinx-autobuild
 psutil==5.0.0
-py==1.4.31                # via pytest
-pycodestyle==2.0.0        # via flake8
+    # via -r requirements.txt
+py==1.4.31
+    # via pytest
+pycodestyle==2.0.0
+    # via flake8
 pycparser==2.18
-pyflakes==1.2.3           # via flake8
-pygments==2.1.3           # via sphinx
+    # via
+    #   -r requirements.txt
+    #   cffi
+pyflakes==1.2.3
+    # via flake8
+pygments==2.1.3
+    # via sphinx
 pyketama==0.2.1
+    # via
+    #   -r requirements.txt
+    #   meepo2
 pylint==1.6.4
+    # via -r requirements-dev.in
 pymysql==0.6.2
+    # via
+    #   -r requirements.txt
+    #   mysql-replication
 pytest-cov==2.3.1
+    # via -r requirements-dev.in
 pytest-faker==2.0.0
+    # via -r requirements-dev.in
 pytest-flask==0.10.0
+    # via -r requirements-dev.in
 pytest-mock==1.2
+    # via -r requirements-dev.in
 pytest-xpara[yaml]==0.1.0
+    # via -r requirements-dev.in
 pytest==3.0.2
+    # via
+    #   -r requirements-dev.in
+    #   pytest-cov
+    #   pytest-flask
+    #   pytest-mock
+    #   pytest-xpara
 python-dateutil==2.6.0
+    # via
+    #   -r requirements.txt
+    #   faker
+    #   freezegun
 python-decouple==3.0
+    # via -r requirements.txt
 pytz==2016.6.1
-pyyaml==3.11              # via pytest-xpara, sphinx-autobuild, watchdog
+    # via
+    #   -r requirements.txt
+    #   babel
+pyyaml==5.4
+    # via
+    #   pytest-xpara
+    #   sphinx-autobuild
+    #   watchdog
 pyzmq==14.7.0
+    # via
+    #   -r requirements.txt
+    #   meepo2
 raven==5.2.0
+    # via -r requirements.txt
 redis==2.10.5
+    # via
+    #   -r requirements.txt
+    #   meepo2
 requests-mock==1.2.0
+    # via -r requirements-dev.in
 requests==2.20.0
+    # via
+    #   -r requirements.txt
+    #   huskar-sdk-v2
+    #   requests-mock
+    #   sphinx
 simplejson==3.7.3
-singledispatch==3.4.0.3   # via tornado
+    # via
+    #   -r requirements.txt
+    #   huskar-sdk-v2
+singledispatch==3.4.0.3
+    # via tornado
 six==1.10.0
-snowballstemmer==1.2.1    # via sphinx
+    # via
+    #   -r requirements.txt
+    #   astroid
+    #   faker
+    #   freezegun
+    #   livereload
+    #   mock
+    #   more-itertools
+    #   mysql-replication
+    #   pylint
+    #   python-dateutil
+    #   requests-mock
+    #   sphinx
+    #   sphinxcontrib-httpdomain
+snowballstemmer==1.2.1
+    # via sphinx
 sphinx-autobuild==0.6.0
+    # via -r requirements-dev.in
 sphinx-rtd-theme==0.1.9
+    # via -r requirements-dev.in
 sphinx==1.5.1
+    # via
+    #   -r requirements-dev.in
+    #   sphinx-rtd-theme
+    #   sphinxcontrib-httpdomain
 sphinxcontrib-httpdomain==1.7.0
+    # via -r requirements-dev.in
 sqlalchemy==0.9.3
-tornado==4.4.1            # via livereload, sphinx-autobuild
+    # via
+    #   -r requirements.txt
+    #   alembic
+    #   meepo2
+tornado==4.4.1
+    # via
+    #   livereload
+    #   sphinx-autobuild
 urllib3==1.24.1
-watchdog==0.8.3           # via sphinx-autobuild
+    # via
+    #   -r requirements.txt
+    #   requests
+watchdog==0.8.3
+    # via sphinx-autobuild
 werkzeug==0.11.11
-wrapt==1.10.8             # via astroid
+    # via
+    #   -r requirements.txt
+    #   flask
+    #   pytest-flask
+wrapt==1.10.8
+    # via astroid
